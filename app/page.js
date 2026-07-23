@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { motion, useReducedMotion, useInView, animate } from 'framer-motion'
+import { motion, useReducedMotion, useInView, animate, AnimatePresence, useScroll, useSpring } from 'framer-motion'
 import Image from 'next/image'
 import { useTheme } from 'next-themes'
 import { Button } from '@/components/ui/button'
@@ -16,6 +16,7 @@ import {
   Keyboard, Database, Sparkles, Phone, MessageCircle, ArrowUp,
   Star, ShieldCheck, Zap, IndianRupee, Award, ChevronRight, Menu, X,
   MapPin, Clock, Mail, ArrowRight, CheckCircle2, Sun, Moon, Facebook, Instagram, Globe,
+  Fan, Thermometer, Gauge, Hammer,
 } from 'lucide-react'
 import {
   SITE, yearsExperience, trustBadges, brands, whyChooseUs,
@@ -41,6 +42,118 @@ const buildTypes = [
   { name: 'Editing / Creator', desc: '4K editing, 3D & content creation', price: 'Starts ₹95,000', icon: Sparkles, tone: 'from-violet-500/10 to-violet-500/0' },
   { name: 'Office PC', desc: 'Silent, reliable business machines', price: 'Starts ₹32,000', icon: Building2, tone: 'from-blue-500/10 to-blue-500/0' },
   { name: 'Enterprise PC', desc: 'Bulk orders with support & warranty', price: 'Quote on request', icon: ShieldCheck, tone: 'from-slate-500/10 to-slate-500/0' },
+]
+
+const maintenanceServices = [
+  {
+    icon: Fan,
+    title: 'Internal Deep Cleaning',
+    items: ['Internal dust removal', 'Cooling fan cleaning', 'Heat sink cleaning', 'Air vent cleaning', 'Professional internal cleaning'],
+    gradient: 'from-cyan-500 to-blue-500',
+    beforeImage: 'https://images.unsplash.com/photo-1588508065123-287b28e013da',
+    afterImage: 'https://images.unsplash.com/photo-1542751371-adc38448a05e',
+  },
+  {
+    icon: Thermometer,
+    title: 'Thermal Repasting',
+    items: ['CPU Thermal Paste Replacement', 'GPU Thermal Repasting (Supported Models)', 'Premium Thermal Compound', 'Temperature Optimization', 'Cooling Performance Testing'],
+    gradient: 'from-indigo-500 to-blue-500',
+    beforeImage: 'https://images.unsplash.com/photo-1591370874773-6702e8f12fd8',
+    afterImage: 'https://images.unsplash.com/photo-1518770660439-4636190af475',
+  },
+  {
+    icon: Gauge,
+    title: 'Performance Optimization',
+    items: ['Startup Optimization', 'Windows Optimization', 'Driver Updates', 'Temporary File Cleanup', 'System Performance Tuning'],
+    gradient: 'from-sky-500 to-indigo-500',
+    beforeImage: 'https://images.unsplash.com/photo-1587831990711-23ca6441447b',
+    afterImage: 'https://images.unsplash.com/photo-1660855552442-1bae49431379',
+  },
+  {
+    icon: ShieldCheck,
+    title: 'Preventive Maintenance',
+    items: ['Hardware Health Check', 'Battery Health Inspection', 'SSD/HDD Health Check', 'Cooling System Inspection', 'Fan Performance Testing'],
+    gradient: 'from-emerald-500 to-teal-500',
+    beforeImage: 'https://images.unsplash.com/photo-1588508065123-287b28e013da',
+    afterImage: 'https://images.unsplash.com/photo-1550009158-9ebf69173e03',
+  },
+  {
+    icon: Monitor,
+    title: 'System Diagnostics',
+    items: ['Hardware Diagnostics', 'Temperature Monitoring', 'Memory Testing', 'Storage Testing', 'Performance Benchmarking'],
+    gradient: 'from-violet-500 to-fuchsia-500',
+    beforeImage: 'https://images.unsplash.com/photo-1587202372634-32705e3bf49c',
+    afterImage: 'https://images.unsplash.com/photo-1587202372775-e229f172b9d7',
+  },
+]
+
+const maintenanceBenefits = [
+  { title: 'Prevents Overheating' },
+  { title: 'Improves Performance' },
+  { title: 'Extends Device Lifespan' },
+  { title: 'Reduces Fan Noise' },
+  { title: 'Better Cooling Efficiency' },
+  { title: 'Prevents Unexpected Hardware Failure' },
+]
+
+const fabricationServices = [
+  {
+    icon: Wrench,
+    title: 'Hinge Repair',
+    items: ['Broken hinge repair', 'Loose hinge repair', 'Stiff hinge adjustment'],
+    gradient: 'from-blue-500 to-cyan-500',
+    beforeImage: 'https://images.unsplash.com/photo-1588508065123-287b28e013da',
+    afterImage: 'https://images.unsplash.com/photo-1542751371-adc38448a05e',
+  },
+  {
+    icon: Hammer,
+    title: 'Hinge Fabrication',
+    items: ['Custom hinge mount fabrication', 'Screw mount reconstruction', 'Metal reinforcement'],
+    gradient: 'from-indigo-500 to-violet-500',
+    beforeImage: 'https://images.unsplash.com/photo-1591370874773-6702e8f12fd8',
+    afterImage: 'https://images.unsplash.com/photo-1587831990711-23ca6441447b',
+  },
+  {
+    icon: HardDrive,
+    title: 'Laptop Body Repair',
+    items: ['Palm rest repair', 'Bottom cover repair', 'LCD back cover repair', 'Chassis repair'],
+    gradient: 'from-slate-500 to-slate-700',
+    beforeImage: 'https://images.unsplash.com/photo-1588508065123-287b28e013da',
+    afterImage: 'https://images.unsplash.com/photo-1542751371-adc38448a05e',
+  },
+  {
+    icon: Wrench,
+    title: 'Plastic Welding',
+    items: ['Crack repair', 'Structural reinforcement', 'Broken plastic restoration'],
+    gradient: 'from-fuchsia-500 to-pink-500',
+    beforeImage: 'https://images.unsplash.com/photo-1591370874773-6702e8f12fd8',
+    afterImage: 'https://images.unsplash.com/photo-1587202372634-32705e3bf49c',
+  },
+  {
+    icon: Sparkles,
+    title: 'Cosmetic Restoration',
+    items: ['Surface refinishing', 'Alignment correction', 'Professional finishing'],
+    gradient: 'from-blue-500 to-indigo-600',
+    beforeImage: 'https://images.unsplash.com/photo-1588508065123-287b28e013da',
+    afterImage: 'https://images.unsplash.com/photo-1587202372775-e229f172b9d7',
+  },
+  {
+    icon: ShieldCheck,
+    title: 'Precision Repairs',
+    items: ['Internal frame repair', 'Mount rebuilding', 'Structural restoration'],
+    gradient: 'from-emerald-500 to-lime-500',
+    beforeImage: 'https://images.unsplash.com/photo-1518770660439-4636190af475',
+    afterImage: 'https://images.unsplash.com/photo-1542751371-adc38448a05e',
+  },
+]
+
+const fabricationReasons = [
+  { title: 'Cost Effective' },
+  { title: 'Skilled Technicians' },
+  { title: 'Precision Workmanship' },
+  { title: 'Durable Repairs' },
+  { title: 'Professional Equipment' },
+  { title: 'Quality Materials' },
 ]
 
 const navLinks = [
@@ -74,15 +187,25 @@ function ThemeToggle() {
 function Nav() {
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const { scrollYProgress } = useScroll()
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
+  })
+
   useEffect(() => {
     const on = () => setScrolled(window.scrollY > 20)
     on(); window.addEventListener('scroll', on); return () => window.removeEventListener('scroll', on)
   }, [])
   return (
     <header className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${scrolled ? 'bg-background/80 backdrop-blur-xl border-b border-border shadow-sm' : 'bg-transparent'}`}>
+      <motion.div
+        className="absolute bottom-0 left-0 right-0 h-[3px] bg-gradient-to-r from-blue-600 via-indigo-500 to-fuchsia-500 origin-[0%] shadow-[0_1px_10px_rgba(99,102,241,0.8)] z-50"
+        style={{ scaleX }}
+      />
       <div className="container mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">
         <a href="#home" className="flex items-center gap-2 font-semibold text-lg tracking-tight">
-          <span className="grid place-items-center h-9 w-9 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white font-bold shadow-md">10</span>
           <span>1010 <span className="text-blue-600 dark:text-blue-400">Computers</span></span>
         </a>
         <nav className="hidden lg:flex items-center gap-7 text-sm font-medium text-muted-foreground">
@@ -174,9 +297,16 @@ function Hero() {
         >
           <div className="relative aspect-[4/5] max-w-md mx-auto">
             <div className="absolute inset-0 rounded-[32px] bg-gradient-to-br from-blue-600 via-indigo-600 to-fuchsia-600 blur-2xl opacity-30"></div>
-            <div className="relative h-full w-full rounded-[32px] overflow-hidden shadow-2xl border border-white/60 bg-slate-900">
-              <Image src="https://images.unsplash.com/photo-1660855552442-1bae49431379" alt="Custom gaming PC with blue RGB lighting built by 1010 Computers" fill className="object-cover" priority sizes="(max-width: 768px) 100vw, 500px"/>
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent"></div>
+            <div className="relative h-full w-full rounded-[32px] overflow-hidden shadow-2xl border border-white/60 bg-slate-900 min-h-[500px] flex items-center justify-center">
+              <iframe
+                src="/3d-pc.html"
+                frameBorder="0"
+                width="100%"
+                height="100%"
+                className="absolute inset-0 w-full h-full"
+                title="3D Gaming PC Model"
+                loading="lazy"
+              />
             </div>
             <motion.div initial={prefersReduced ? {} : { opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6, duration: 0.5 }} className="absolute -left-6 top-8 bg-background/90 backdrop-blur-md rounded-2xl shadow-xl border border-border p-4 flex items-center gap-3">
               <div className="h-10 w-10 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 grid place-items-center"><ShieldCheck className="h-5 w-5"/></div>
@@ -317,6 +447,454 @@ function Services() {
   )
 }
 
+function SectionHeading({ label, title, subtitle }) {
+  return (
+    <div className="max-w-2xl">
+      <Badge className="rounded-full bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 hover:bg-blue-50 border-0">{label}</Badge>
+      <h2 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight">{title}</h2>
+      <p className="mt-4 text-lg text-muted-foreground">{subtitle}</p>
+    </div>
+  )
+}
+
+function MaintenanceEnquiryForm({ serviceTitle, onClose }) {
+  const [form, setForm] = useState({ name: '', phone: '', message: `Hi, I am interested in ${serviceTitle} service.` })
+  const [loading, setLoading] = useState(false)
+
+  const submit = async (e) => {
+    e.preventDefault()
+    if (!form.name.trim() || !form.phone.trim()) {
+      toast.error('Please enter your name and phone number.')
+      return
+    }
+    setLoading(true)
+    try {
+      const res = await fetch('/api/enquiries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...form, type: `maintenance: ${serviceTitle}` }),
+      })
+      if (!res.ok) throw new Error('Request failed')
+      toast.success("Thanks! We'll reach out shortly.")
+      setForm({ name: '', phone: '', message: '' })
+      onClose()
+    } catch (err) {
+      toast.error('Could not send. Please try WhatsApp instead.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <form onSubmit={submit} className="mt-4 space-y-4">
+      <div>
+        <label className="text-xs font-medium">Your Name</label>
+        <Input value={form.name} onChange={e => setForm({...form, name: e.target.value})} placeholder="e.g. Rohan Sharma" className="mt-1.5 h-10 rounded-xl text-sm" required/>
+      </div>
+      <div>
+        <label className="text-xs font-medium">Phone Number</label>
+        <Input value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} placeholder="+91 98XXX XXXXX" className="mt-1.5 h-10 rounded-xl text-sm" required/>
+      </div>
+      <div>
+        <label className="text-xs font-medium">Message</label>
+        <Textarea value={form.message} onChange={e => setForm({...form, message: e.target.value})} className="mt-1.5 rounded-xl min-h-[80px] text-sm"/>
+      </div>
+      <div className="flex gap-2 pt-2">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => {
+            const url = `https://wa.me/${SITE.whatsappRaw}?text=${encodeURIComponent(`Hi 1010 Computers, I am interested in ${serviceTitle}.`)}`
+            window.open(url, '_blank')
+          }}
+          className="flex-1 h-11 rounded-full text-xs border-emerald-500 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/30"
+        >
+          <MessageCircle className="h-4 w-4 mr-1" /> WhatsApp
+        </Button>
+        <Button type="submit" disabled={loading} className="flex-1 h-11 rounded-full bg-slate-900 hover:bg-slate-800 text-white dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 text-xs">
+          {loading ? 'Sending…' : 'Submit'}
+        </Button>
+      </div>
+    </form>
+  )
+}
+
+function MaintenanceSection() {
+  const [selectedService, setSelectedService] = useState(null)
+
+  return (
+    <section id="maintenance" className="py-24 md:py-32 bg-muted/30">
+      <div className="container mx-auto max-w-7xl px-6">
+        <SectionHeading
+          label="Computer Care & Maintenance"
+          title="Professional Deep Cleaning, Thermal Repasting & Performance Optimization"
+          subtitle="Keep your laptop or desktop performing like new with our professional maintenance services. Regular internal cleaning and thermal maintenance help prevent overheating, improve cooling efficiency, extend hardware lifespan, and maintain peak system performance."
+        />
+
+        <div className="mt-14 grid gap-5 md:grid-cols-2 xl:grid-cols-5">
+          {maintenanceServices.map((service, i) => (
+            <motion.div
+              key={service.title}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-50px' }}
+              transition={{ duration: 0.45, delay: i * 0.08, ease: 'easeOut' }}
+              onClick={() => setSelectedService(service)}
+              className="group relative rounded-3xl bg-background border border-border p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl cursor-pointer hover:border-blue-500/50 hover:bg-accent/5 flex flex-col justify-between"
+            >
+              <div>
+                <div className={`inline-flex items-center justify-center h-12 w-12 rounded-2xl bg-gradient-to-br ${service.gradient} text-white shadow-lg`}>
+                  {(() => { const Icon = service.icon; return <Icon className="h-5 w-5" /> })()}
+                </div>
+                <h3 className="mt-5 text-xl font-semibold text-foreground">{service.title}</h3>
+                <ul className="mt-4 space-y-2 text-sm text-muted-foreground leading-relaxed">
+                  {service.items.slice(0, 3).map(item => <li key={item} className="flex items-start gap-2"><span className="mt-1 inline-block text-blue-600">•</span>{item}</li>)}
+                  {service.items.length > 3 && (
+                    <li className="text-xs text-blue-600 dark:text-blue-400 font-medium mt-1">+{service.items.length - 3} more features</li>
+                  )}
+                </ul>
+              </div>
+              <div className="mt-4 text-xs font-semibold text-blue-600 dark:text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
+                View details &amp; book <ChevronRight className="h-3 w-3" />
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        <div className="mt-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {maintenanceBenefits.map((benefit, i) => (
+            <motion.div
+              key={benefit.title}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-50px' }}
+              transition={{ duration: 0.45, delay: i * 0.06, ease: 'easeOut' }}
+              className="rounded-3xl bg-white/90 dark:bg-slate-950/80 border border-border p-5 shadow-sm backdrop-blur-xl"
+            >
+              <div className="flex items-center gap-3">
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-600 text-white">✔</span>
+                <p className="font-semibold text-foreground">{benefit.title}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        <div className="mt-16 text-center">
+          <a href="#contact">
+            <Button size="lg" className="rounded-full h-14 px-8 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg hover:from-blue-700 hover:to-indigo-700">Book Maintenance Service</Button>
+          </a>
+        </div>
+      </div>
+
+      <AnimatePresence>
+        {selectedService && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedService(null)}
+              className="absolute inset-0 bg-slate-950/60 backdrop-blur-md"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-[28px] border border-border bg-background shadow-2xl p-6 md:p-8 z-10 animate-in fade-in zoom-in duration-200"
+            >
+              <button
+                onClick={() => setSelectedService(null)}
+                className="absolute top-4 right-4 p-2 rounded-full border border-border bg-background hover:bg-accent text-muted-foreground hover:text-foreground transition-all z-20"
+                aria-label="Close modal"
+              >
+                <X className="h-5 w-5" />
+              </button>
+
+              <div className="grid md:grid-cols-2 gap-8 mt-4">
+                <div>
+                  <div className={`inline-flex items-center justify-center h-14 w-14 rounded-2xl bg-gradient-to-br ${selectedService.gradient} text-white shadow-lg`}>
+                    {(() => { const Icon = selectedService.icon; return <Icon className="h-6 w-6" /> })()}
+                  </div>
+                  <h3 className="mt-5 text-2xl font-bold text-foreground">{selectedService.title}</h3>
+                  <p className="mt-3 text-muted-foreground text-sm leading-relaxed">
+                    Keep your system running cool and fast. Here is everything included in this service:
+                  </p>
+
+                  <div className="mt-6">
+                    <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">What's included:</h4>
+                    <ul className="mt-3 space-y-2.5">
+                      {selectedService.items.map(item => (
+                        <li key={item} className="flex items-start gap-3 text-sm text-foreground">
+                          <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {selectedService.beforeImage && selectedService.afterImage && (
+                    <div className="mt-6">
+                      <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">Before &amp; After Example:</h4>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="relative rounded-2xl overflow-hidden aspect-video border border-border">
+                          <Image
+                            src={selectedService.beforeImage}
+                            alt={`${selectedService.title} Before`}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 50vw, 250px"
+                          />
+                          <span className="absolute bottom-2 left-2 bg-red-600/95 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider shadow">Before</span>
+                        </div>
+                        <div className="relative rounded-2xl overflow-hidden aspect-video border border-border">
+                          <Image
+                            src={selectedService.afterImage}
+                            alt={`${selectedService.title} After`}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 50vw, 250px"
+                          />
+                          <span className="absolute bottom-2 left-2 bg-emerald-600/95 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider shadow">After</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="border-t md:border-t-0 md:border-l border-border pt-6 md:pt-0 md:pl-8">
+                  <h4 className="text-lg font-semibold">Quick Enquiry</h4>
+                  <p className="text-xs text-muted-foreground mt-1">Book this service or request a callback. We reply fast.</p>
+                  
+                  <MaintenanceEnquiryForm serviceTitle={selectedService.title} onClose={() => setSelectedService(null)} />
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+    </section>
+  )
+}
+
+function FabricationEnquiryForm({ serviceTitle, onClose }) {
+  const [form, setForm] = useState({ name: '', phone: '', message: `Hi, I am interested in ${serviceTitle} service.` })
+  const [loading, setLoading] = useState(false)
+
+  const submit = async (e) => {
+    e.preventDefault()
+    if (!form.name.trim() || !form.phone.trim()) {
+      toast.error('Please enter your name and phone number.')
+      return
+    }
+    setLoading(true)
+    try {
+      const res = await fetch('/api/enquiries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...form, type: `fabrication: ${serviceTitle}` }),
+      })
+      if (!res.ok) throw new Error('Request failed')
+      toast.success("Thanks! We'll reach out shortly.")
+      setForm({ name: '', phone: '', message: '' })
+      onClose()
+    } catch (err) {
+      toast.error('Could not send. Please try WhatsApp instead.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <form onSubmit={submit} className="mt-4 space-y-4">
+      <div>
+        <label className="text-xs font-medium">Your Name</label>
+        <Input value={form.name} onChange={e => setForm({...form, name: e.target.value})} placeholder="e.g. Rohan Sharma" className="mt-1.5 h-10 rounded-xl text-sm" required/>
+      </div>
+      <div>
+        <label className="text-xs font-medium">Phone Number</label>
+        <Input value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} placeholder="+91 98XXX XXXXX" className="mt-1.5 h-10 rounded-xl text-sm" required/>
+      </div>
+      <div>
+        <label className="text-xs font-medium">Message</label>
+        <Textarea value={form.message} onChange={e => setForm({...form, message: e.target.value})} className="mt-1.5 rounded-xl min-h-[80px] text-sm"/>
+      </div>
+      <div className="flex gap-2 pt-2">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => {
+            const url = `https://wa.me/${SITE.whatsappRaw}?text=${encodeURIComponent(`Hi 1010 Computers, I am interested in ${serviceTitle}.`)}`
+            window.open(url, '_blank')
+          }}
+          className="flex-1 h-11 rounded-full text-xs border-emerald-500 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/30"
+        >
+          <MessageCircle className="h-4 w-4 mr-1" /> WhatsApp
+        </Button>
+        <Button type="submit" disabled={loading} className="flex-1 h-11 rounded-full bg-slate-900 hover:bg-slate-800 text-white dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 text-xs">
+          {loading ? 'Sending…' : 'Submit'}
+        </Button>
+      </div>
+    </form>
+  )
+}
+
+function FabricationSection() {
+  const [selectedService, setSelectedService] = useState(null)
+
+  return (
+    <section id="fabrication" className="py-24 md:py-32 bg-background">
+      <div className="container mx-auto max-w-7xl px-6">
+        <SectionHeading
+          label="Laptop Fabrication & Restoration"
+          title="Precision Repairs for Damaged Laptop Bodies & Hinges"
+          subtitle="Our laptop fabrication service restores damaged laptop bodies and structural components using professional repair techniques. Instead of replacing expensive assemblies, we repair and reinforce damaged parts whenever possible, helping customers save money while extending the life of their devices."
+        />
+
+        <div className="mt-14 grid gap-5 lg:grid-cols-3 xl:grid-cols-6">
+          {fabricationServices.map((service, i) => (
+            <motion.div
+              key={service.title}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-50px' }}
+              transition={{ duration: 0.45, delay: i * 0.08, ease: 'easeOut' }}
+              onClick={() => setSelectedService(service)}
+              className="group relative rounded-3xl bg-background border border-border p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl cursor-pointer hover:border-blue-500/50 hover:bg-accent/5 flex flex-col justify-between"
+            >
+              <div>
+                <div className={`inline-flex items-center justify-center h-12 w-12 rounded-2xl bg-gradient-to-br ${service.gradient} text-white shadow-lg`}>
+                  {(() => { const Icon = service.icon; return <Icon className="h-5 w-5" /> })()}
+                </div>
+                <h3 className="mt-5 text-xl font-semibold text-foreground">{service.title}</h3>
+                <ul className="mt-4 space-y-2 text-sm text-muted-foreground leading-relaxed">
+                  {service.items.slice(0, 3).map(item => <li key={item} className="flex items-start gap-2"><span className="mt-1 inline-block text-blue-600">•</span>{item}</li>)}
+                  {service.items.length > 3 && (
+                    <li className="text-xs text-blue-600 dark:text-blue-400 font-medium mt-1">+{service.items.length - 3} more</li>
+                  )}
+                </ul>
+              </div>
+              <div className="mt-4 text-xs font-semibold text-blue-600 dark:text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
+                View details &amp; book <ChevronRight className="h-3 w-3" />
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        <div className="mt-16 overflow-hidden rounded-3xl border border-border bg-muted/30 p-6">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {fabricationReasons.map((reason, i) => (
+              <motion.div
+                key={reason.title}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-50px' }}
+                transition={{ duration: 0.45, delay: i * 0.05, ease: 'easeOut' }}
+                className="flex items-center gap-3 rounded-3xl bg-background border border-border p-5 shadow-sm"
+              >
+                <div className="h-11 w-11 rounded-2xl bg-blue-600 text-white grid place-items-center shadow-lg">✓</div>
+                <p className="font-semibold text-foreground">{reason.title}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-16 text-center">
+          <a href="#contact">
+            <Button size="lg" className="rounded-full h-14 px-8 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg hover:from-blue-700 hover:to-indigo-700">Request Fabrication Service</Button>
+          </a>
+        </div>
+      </div>
+
+      <AnimatePresence>
+        {selectedService && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedService(null)}
+              className="absolute inset-0 bg-slate-950/60 backdrop-blur-md"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-[28px] border border-border bg-background shadow-2xl p-6 md:p-8 z-10 animate-in fade-in zoom-in duration-200"
+            >
+              <button
+                onClick={() => setSelectedService(null)}
+                className="absolute top-4 right-4 p-2 rounded-full border border-border bg-background hover:bg-accent text-muted-foreground hover:text-foreground transition-all z-20"
+                aria-label="Close modal"
+              >
+                <X className="h-5 w-5" />
+              </button>
+
+              <div className="grid md:grid-cols-2 gap-8 mt-4">
+                <div>
+                  <div className={`inline-flex items-center justify-center h-14 w-14 rounded-2xl bg-gradient-to-br ${selectedService.gradient} text-white shadow-lg`}>
+                    {(() => { const Icon = selectedService.icon; return <Icon className="h-6 w-6" /> })()}
+                  </div>
+                  <h3 className="mt-5 text-2xl font-bold text-foreground">{selectedService.title}</h3>
+                  <p className="mt-3 text-muted-foreground text-sm leading-relaxed">
+                    Professional restoration and precision repair work. Here is what is included:
+                  </p>
+
+                  <div className="mt-6">
+                    <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">What's included:</h4>
+                    <ul className="mt-3 space-y-2.5">
+                      {selectedService.items.map(item => (
+                        <li key={item} className="flex items-start gap-3 text-sm text-foreground">
+                          <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {selectedService.beforeImage && selectedService.afterImage && (
+                    <div className="mt-6">
+                      <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">Before &amp; After Example:</h4>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="relative rounded-2xl overflow-hidden aspect-video border border-border">
+                          <Image
+                            src={selectedService.beforeImage}
+                            alt={`${selectedService.title} Before`}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 50vw, 250px"
+                          />
+                          <span className="absolute bottom-2 left-2 bg-red-600/95 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider shadow">Before</span>
+                        </div>
+                        <div className="relative rounded-2xl overflow-hidden aspect-video border border-border">
+                          <Image
+                            src={selectedService.afterImage}
+                            alt={`${selectedService.title} After`}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 50vw, 250px"
+                          />
+                          <span className="absolute bottom-2 left-2 bg-emerald-600/95 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider shadow">After</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="border-t md:border-t-0 md:border-l border-border pt-6 md:pt-0 md:pl-8">
+                  <h4 className="text-lg font-semibold">Quick Enquiry</h4>
+                  <p className="text-xs text-muted-foreground mt-1">Book this fabrication service or request a callback. We reply fast.</p>
+                  
+                  <FabricationEnquiryForm serviceTitle={selectedService.title} onClose={() => setSelectedService(null)} />
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+    </section>
+  )
+}
+
 function ServiceCard({ icon: Icon, title, desc, gradient, delay = 0 }) {
   const prefersReduced = useReducedMotion()
   return (
@@ -327,8 +905,7 @@ function ServiceCard({ icon: Icon, title, desc, gradient, delay = 0 }) {
       transition={{ duration: 0.4, delay, ease: 'easeOut' }}
       className="group relative"
     >
-      <div className={`absolute -inset-px rounded-2xl bg-gradient-to-br ${gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm`}></div>
-      <div className="relative h-full rounded-2xl bg-background border border-border p-6 shadow-sm hover:shadow-xl transition-all duration-300 group-hover:-translate-y-1">
+      <div className="relative h-full rounded-2xl bg-background border border-border p-6 shadow-sm transition-shadow hover:shadow-lg hover:-translate-y-0.5 duration-300">
         <div className={`inline-grid place-items-center h-11 w-11 rounded-xl bg-gradient-to-br ${gradient} text-white shadow-lg`}>
           <Icon className="h-5 w-5"/>
         </div>
@@ -350,40 +927,40 @@ function BuildPC() {
   ]
   return (
     <section id="build" className="py-24 md:py-32 relative overflow-hidden">
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950"></div>
-      <div className="absolute -z-10 inset-0 bg-[radial-gradient(ellipse_at_top,rgba(59,130,246,0.15),transparent_50%)]"></div>
-      <div className="absolute -z-10 inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(217,70,239,0.12),transparent_50%)]"></div>
+      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-slate-100 via-slate-50 to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950"></div>
+      <div className="absolute -z-10 inset-0 bg-[radial-gradient(ellipse_at_top,rgba(148,163,184,0.18),transparent_50%)] dark:bg-[radial-gradient(ellipse_at_top,rgba(148,163,184,0.08),transparent_50%)]"></div>
+      <div className="absolute -z-10 inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(148,163,184,0.12),transparent_50%)] dark:bg-[radial-gradient(ellipse_at_bottom,rgba(148,163,184,0.06),transparent_50%)]"></div>
       <div className="container mx-auto max-w-7xl px-6">
         <div className="max-w-2xl">
-          <Badge className="rounded-full bg-white/10 text-white hover:bg-white/10 border-0 backdrop-blur">Custom Builds</Badge>
-          <h2 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-white">Build your dream PC — the way you imagined it.</h2>
-          <p className="mt-4 text-lg text-slate-300">Whether you&apos;re chasing 4K gaming, editing 8K footage, or deploying 50 office machines — our experts design and assemble it, tested and ready.</p>
+          <Badge className="rounded-full bg-slate-200 text-slate-900 hover:bg-slate-300 border-0 backdrop-blur dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700">Custom Builds</Badge>
+          <h2 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-slate-950 dark:text-white">Build your dream PC — the way you imagined it.</h2>
+          <p className="mt-4 text-lg text-slate-600 dark:text-slate-300">Whether you&apos;re chasing 4K gaming, editing 8K footage, or deploying 50 office machines — our experts design and assemble it, tested and ready.</p>
         </div>
 
         <div className="mt-14 grid md:grid-cols-3 gap-5">
           {steps.map((s, i) => (
-            <motion.div key={s.n} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.1 }} className="relative rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl p-6 hover:bg-white/10 transition-colors">
+            <motion.div key={s.n} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.1 }} className="relative rounded-2xl bg-slate-50 border border-slate-200 p-6 hover:bg-slate-100 transition-colors dark:bg-slate-950 dark:border-slate-800 dark:hover:bg-slate-900">
               <div className="flex items-center justify-between">
-                <div className="grid place-items-center h-12 w-12 rounded-xl bg-gradient-to-br from-blue-500 to-fuchsia-500 text-white shadow-lg"><s.icon className="h-5 w-5"/></div>
-                <span className="text-4xl font-semibold text-white/10">{s.n}</span>
+                <div className="grid place-items-center h-12 w-12 rounded-xl bg-slate-500 text-white shadow-lg dark:bg-slate-600"><s.icon className="h-5 w-5"/></div>
+                <span className="text-4xl font-semibold text-slate-400 dark:text-slate-500">{s.n}</span>
               </div>
-              <h3 className="mt-4 text-xl font-semibold text-white">{s.title}</h3>
-              <p className="mt-2 text-slate-300 text-sm leading-relaxed">{s.desc}</p>
+              <h3 className="mt-4 text-xl font-semibold text-slate-950 dark:text-white">{s.title}</h3>
+              <p className="mt-2 text-slate-600 dark:text-slate-400 text-sm leading-relaxed">{s.desc}</p>
             </motion.div>
           ))}
         </div>
 
         <div className="mt-16">
-          <h3 className="text-xl font-semibold text-white mb-6">Popular build types</h3>
+          <h3 className="text-xl font-semibold text-slate-950 dark:text-white mb-6">Popular build types</h3>
           <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
             {buildTypes.map((b, i) => (
-              <motion.div key={b.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.05 }} className="group relative rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl p-5 hover:border-white/30 transition-all hover:-translate-y-1">
+              <motion.div key={b.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.05 }} className="group relative rounded-2xl bg-slate-100 border border-slate-200 backdrop-blur-xl p-5 hover:bg-slate-200 transition-all hover:-translate-y-1 dark:bg-white/5 dark:border-white/10 dark:hover:border-white/30">
                 <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${b.tone} opacity-0 group-hover:opacity-100 transition-opacity`}></div>
                 <div className="relative">
-                  <b.icon className="h-6 w-6 text-white"/>
-                  <div className="mt-4 text-white font-semibold">{b.name}</div>
-                  <div className="text-sm text-slate-300 mt-1">{b.desc}</div>
-                  <div className="mt-4 text-xs uppercase tracking-wider text-blue-300 font-medium">{b.price}</div>
+                  <b.icon className="h-6 w-6 text-slate-950 dark:text-white"/>
+                  <div className="mt-4 text-slate-950 font-semibold dark:text-white">{b.name}</div>
+                  <div className="text-sm text-slate-600 mt-1 dark:text-slate-300">{b.desc}</div>
+                  <div className="mt-4 text-xs uppercase tracking-wider text-blue-600 font-medium dark:text-blue-300">{b.price}</div>
                 </div>
               </motion.div>
             ))}
@@ -575,7 +1152,7 @@ function Contact() {
     }
   }
 
-  const mapQ = encodeURIComponent(`${SITE.address.line1}, ${SITE.address.line2}, ${SITE.address.city}`)
+  const mapQ = encodeURIComponent(SITE.mapQuery || `${SITE.address.line1}, ${SITE.address.line2}, ${SITE.address.city}`)
 
   return (
     <section id="contact" className="py-24 md:py-32 bg-muted/30">
@@ -598,7 +1175,6 @@ function Contact() {
             <ContactItem icon={MessageCircle} title="WhatsApp"><a href={`https://wa.me/${SITE.whatsappRaw}`} target="_blank" rel="noreferrer" className="hover:text-emerald-600 font-medium">{SITE.whatsapp}</a></ContactItem>
             <ContactItem icon={Mail} title="Email">{SITE.email}</ContactItem>
             <ContactItem icon={Zap} title="Service area">{SITE.serviceArea}</ContactItem>
-            <ContactItem icon={ShieldCheck} title="Parking">{SITE.parking}</ContactItem>
           </div>
 
           <div className="mt-8 aspect-[16/10] rounded-2xl border border-border overflow-hidden shadow-lg bg-background">
@@ -661,7 +1237,6 @@ function Footer() {
       <div className="container mx-auto max-w-7xl px-6 grid md:grid-cols-4 gap-10">
         <div className="md:col-span-2">
           <div className="flex items-center gap-2 font-semibold text-white text-lg">
-            <span className="grid place-items-center h-9 w-9 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white font-bold">10</span>
             1010 Computers
           </div>
           <p className="mt-4 text-slate-400 max-w-sm">Pune&apos;s trusted destination for computer sales, laptop repairs, custom gaming PCs and enterprise IT since 2015.</p>
@@ -730,6 +1305,8 @@ function App() {
       <StatsSection/>
       <About/>
       <Services/>
+      <MaintenanceSection/>
+      <FabricationSection/>
       <BuildPC/>
       <Brands/>
       <WhyChooseUs/>
