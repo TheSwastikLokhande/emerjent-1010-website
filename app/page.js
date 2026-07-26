@@ -295,14 +295,14 @@ function Hero() {
           transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
           className="relative"
         >
-          <div className="relative max-w-xl mx-auto">
-            <div className="absolute inset-0 rounded-[32px] bg-gradient-to-br from-blue-600 via-indigo-600 to-fuchsia-600 blur-2xl opacity-30"></div>
-            <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-border/60 bg-slate-900 group">
+          <div className="relative max-w-[450px] mx-auto">
+            <div className="absolute inset-0 rounded-[28px] bg-gradient-to-br from-blue-600 via-indigo-600 to-fuchsia-600 blur-2xl opacity-25"></div>
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-border/60 bg-slate-900 group">
               <Image
                 src="/hero-banner.jpg"
                 alt="1010 Computers - Performance, Reliability, Trust"
-                width={1200}
-                height={1200}
+                width={1000}
+                height={1000}
                 className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-500"
                 priority
               />
