@@ -911,9 +911,6 @@ function ServiceCard({ icon: Icon, title, desc, gradient, delay = 0 }) {
         </div>
         <h3 className="mt-4 text-base font-semibold">{title}</h3>
         <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">{desc}</p>
-        <a href="#contact" className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-blue-600 dark:text-blue-400 group-hover:gap-2 transition-all">
-          Learn more <ChevronRight className="h-4 w-4"/>
-        </a>
       </div>
     </motion.div>
   )
