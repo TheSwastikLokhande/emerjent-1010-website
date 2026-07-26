@@ -295,33 +295,18 @@ function Hero() {
           transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
           className="relative"
         >
-          <div className="relative aspect-[4/5] max-w-md mx-auto">
+          <div className="relative max-w-xl mx-auto">
             <div className="absolute inset-0 rounded-[32px] bg-gradient-to-br from-blue-600 via-indigo-600 to-fuchsia-600 blur-2xl opacity-30"></div>
-            <div className="relative h-full w-full rounded-[32px] overflow-hidden shadow-2xl border border-white/60 bg-slate-900 min-h-[500px] flex items-center justify-center">
-              <iframe
-                src="/3d-pc.html"
-                frameBorder="0"
-                width="100%"
-                height="100%"
-                className="absolute inset-0 w-full h-full"
-                title="3D Gaming PC Model"
-                loading="lazy"
+            <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-border/60 bg-slate-900 group">
+              <Image
+                src="/hero-banner.jpg"
+                alt="1010 Computers - Performance, Reliability, Trust"
+                width={1200}
+                height={1200}
+                className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-500"
+                priority
               />
             </div>
-            <motion.div initial={prefersReduced ? {} : { opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6, duration: 0.5 }} className="absolute -left-6 top-8 bg-background/90 backdrop-blur-md rounded-2xl shadow-xl border border-border p-4 flex items-center gap-3">
-              <div className="h-10 w-10 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 grid place-items-center"><ShieldCheck className="h-5 w-5"/></div>
-              <div>
-                <div className="text-xs text-muted-foreground">Genuine Parts</div>
-                <div className="text-sm font-semibold">Warranty Included</div>
-              </div>
-            </motion.div>
-            <motion.div initial={prefersReduced ? {} : { opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8, duration: 0.5 }} className="absolute -right-4 bottom-10 bg-background/90 backdrop-blur-md rounded-2xl shadow-xl border border-border p-4 flex items-center gap-3">
-              <div className="h-10 w-10 rounded-xl bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-400 grid place-items-center"><Award className="h-5 w-5"/></div>
-              <div>
-                <div className="text-xs text-muted-foreground">Trusted Since</div>
-                <div className="text-sm font-semibold">2015 · Kothrud, Pune</div>
-              </div>
-            </motion.div>
           </div>
         </motion.div>
       </div>
