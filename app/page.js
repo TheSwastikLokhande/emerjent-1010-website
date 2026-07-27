@@ -1258,7 +1258,7 @@ function Footer() {
       </LayoutContainer>
       <LayoutContainer className="mt-10 pt-6 border-t border-white/10 flex flex-col md:flex-row gap-3 items-center justify-between text-xs text-slate-500">
         <div>© {new Date().getFullYear()} 1010 Computers. All rights reserved.</div>
-        <div>Made with ♥ in Kothrud, Pune</div>
+        <div>Developed with ♥ by <span className="text-slate-300 font-medium">Swastik Lokhande</span></div>
       </LayoutContainer>
     </footer>
   )
