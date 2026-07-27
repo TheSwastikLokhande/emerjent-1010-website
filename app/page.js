@@ -453,30 +453,28 @@ function SectionHeading({ label, title, subtitle }) {
 
 function MaintenanceEnquiryForm({ serviceTitle, onClose }) {
   const [form, setForm] = useState({ name: '', phone: '', message: `Hi, I am interested in ${serviceTitle} service.` })
-  const [loading, setLoading] = useState(false)
 
-  const submit = async (e) => {
+  const submit = (e) => {
     e.preventDefault()
     if (!form.name.trim() || !form.phone.trim()) {
       toast.error('Please enter your name and phone number.')
       return
     }
-    setLoading(true)
-    try {
-      const res = await fetch('/api/enquiries', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, type: `maintenance: ${serviceTitle}` }),
-      })
-      if (!res.ok) throw new Error('Request failed')
-      toast.success("Thanks! We'll reach out shortly.")
-      setForm({ name: '', phone: '', message: '' })
-      onClose()
-    } catch (err) {
-      toast.error('Could not send. Please try WhatsApp instead.')
-    } finally {
-      setLoading(false)
+    const messageLines = [
+      `Hi 1010 Computers, I am interested in ${serviceTitle}:`,
+      ``,
+      `*Name:* ${form.name.trim()}`,
+      `*Phone:* ${form.phone.trim()}`,
+    ]
+    if (form.message.trim()) {
+      messageLines.push(`*Message:* ${form.message.trim()}`)
     }
+    const text = messageLines.join('\n')
+    const url = `https://wa.me/${SITE.whatsappRaw}?text=${encodeURIComponent(text)}`
+    window.open(url, '_blank')
+    toast.success('Opening WhatsApp...')
+    setForm({ name: '', phone: '', message: '' })
+    if (onClose) onClose()
   }
 
   return (
@@ -493,20 +491,9 @@ function MaintenanceEnquiryForm({ serviceTitle, onClose }) {
         <label className="text-xs font-medium">Message</label>
         <Textarea value={form.message} onChange={e => setForm({...form, message: e.target.value})} className="mt-1.5 rounded-xl min-h-[80px] text-sm"/>
       </div>
-      <div className="flex gap-2 pt-2">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => {
-            const url = `https://wa.me/${SITE.whatsappRaw}?text=${encodeURIComponent(`Hi 1010 Computers, I am interested in ${serviceTitle}.`)}`
-            window.open(url, '_blank')
-          }}
-          className="flex-1 h-11 rounded-full text-xs border-emerald-500 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/30"
-        >
-          <MessageCircle className="h-4 w-4 mr-1" /> WhatsApp
-        </Button>
-        <Button type="submit" disabled={loading} className="flex-1 h-11 rounded-full bg-slate-900 hover:bg-slate-800 text-white dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 text-xs">
-          {loading ? 'Sending…' : 'Submit'}
+      <div className="pt-2">
+        <Button type="submit" className="w-full h-11 rounded-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white text-xs shadow-md">
+          <MessageCircle className="h-4 w-4 mr-1.5" /> Send Enquiry on WhatsApp
         </Button>
       </div>
     </form>
@@ -672,30 +659,28 @@ function MaintenanceSection() {
 
 function FabricationEnquiryForm({ serviceTitle, onClose }) {
   const [form, setForm] = useState({ name: '', phone: '', message: `Hi, I am interested in ${serviceTitle} service.` })
-  const [loading, setLoading] = useState(false)
 
-  const submit = async (e) => {
+  const submit = (e) => {
     e.preventDefault()
     if (!form.name.trim() || !form.phone.trim()) {
       toast.error('Please enter your name and phone number.')
       return
     }
-    setLoading(true)
-    try {
-      const res = await fetch('/api/enquiries', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, type: `fabrication: ${serviceTitle}` }),
-      })
-      if (!res.ok) throw new Error('Request failed')
-      toast.success("Thanks! We'll reach out shortly.")
-      setForm({ name: '', phone: '', message: '' })
-      onClose()
-    } catch (err) {
-      toast.error('Could not send. Please try WhatsApp instead.')
-    } finally {
-      setLoading(false)
+    const messageLines = [
+      `Hi 1010 Computers, I am interested in ${serviceTitle}:`,
+      ``,
+      `*Name:* ${form.name.trim()}`,
+      `*Phone:* ${form.phone.trim()}`,
+    ]
+    if (form.message.trim()) {
+      messageLines.push(`*Message:* ${form.message.trim()}`)
     }
+    const text = messageLines.join('\n')
+    const url = `https://wa.me/${SITE.whatsappRaw}?text=${encodeURIComponent(text)}`
+    window.open(url, '_blank')
+    toast.success('Opening WhatsApp...')
+    setForm({ name: '', phone: '', message: '' })
+    if (onClose) onClose()
   }
 
   return (
@@ -712,20 +697,9 @@ function FabricationEnquiryForm({ serviceTitle, onClose }) {
         <label className="text-xs font-medium">Message</label>
         <Textarea value={form.message} onChange={e => setForm({...form, message: e.target.value})} className="mt-1.5 rounded-xl min-h-[80px] text-sm"/>
       </div>
-      <div className="flex gap-2 pt-2">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => {
-            const url = `https://wa.me/${SITE.whatsappRaw}?text=${encodeURIComponent(`Hi 1010 Computers, I am interested in ${serviceTitle}.`)}`
-            window.open(url, '_blank')
-          }}
-          className="flex-1 h-11 rounded-full text-xs border-emerald-500 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/30"
-        >
-          <MessageCircle className="h-4 w-4 mr-1" /> WhatsApp
-        </Button>
-        <Button type="submit" disabled={loading} className="flex-1 h-11 rounded-full bg-slate-900 hover:bg-slate-800 text-white dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 text-xs">
-          {loading ? 'Sending…' : 'Submit'}
+      <div className="pt-2">
+        <Button type="submit" className="w-full h-11 rounded-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white text-xs shadow-md">
+          <MessageCircle className="h-4 w-4 mr-1.5" /> Send Enquiry on WhatsApp
         </Button>
       </div>
     </form>
@@ -1118,29 +1092,27 @@ function FAQ() {
 
 function Contact() {
   const [form, setForm] = useState({ name: '', phone: '', message: '' })
-  const [loading, setLoading] = useState(false)
 
-  const submit = async (e) => {
+  const submit = (e) => {
     e.preventDefault()
     if (!form.name.trim() || !form.phone.trim()) {
       toast.error('Please enter your name and phone number.')
       return
     }
-    setLoading(true)
-    try {
-      const res = await fetch('/api/enquiries', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, type: 'contact-form' }),
-      })
-      if (!res.ok) throw new Error('Request failed')
-      toast.success("Thanks! We'll reach out shortly.")
-      setForm({ name: '', phone: '', message: '' })
-    } catch (err) {
-      toast.error('Could not send. Please try WhatsApp instead.')
-    } finally {
-      setLoading(false)
+    const messageLines = [
+      `Hi 1010 Computers, I have an enquiry:`,
+      ``,
+      `*Name:* ${form.name.trim()}`,
+      `*Phone:* ${form.phone.trim()}`,
+    ]
+    if (form.message.trim()) {
+      messageLines.push(`*Message:* ${form.message.trim()}`)
     }
+    const text = messageLines.join('\n')
+    const url = `https://wa.me/${SITE.whatsappRaw}?text=${encodeURIComponent(text)}`
+    window.open(url, '_blank')
+    toast.success('Opening WhatsApp...')
+    setForm({ name: '', phone: '', message: '' })
   }
 
   const mapQ = encodeURIComponent(SITE.mapQuery || `${SITE.address.line1}, ${SITE.address.line2}, ${SITE.address.city}`)
@@ -1195,8 +1167,8 @@ function Contact() {
               <label className="text-sm font-medium">Message</label>
               <Textarea value={form.message} onChange={e => setForm({...form, message: e.target.value})} placeholder="Tell us what you need — laptop repair, custom PC build, bulk order, etc." className="mt-1.5 rounded-xl min-h-[120px]"/>
             </div>
-            <Button type="submit" disabled={loading} size="lg" className="w-full h-12 rounded-full bg-slate-900 hover:bg-slate-800 text-white dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 text-base">
-              {loading ? 'Sending…' : <>Book a Service <ArrowRight className="h-4 w-4 ml-2"/></>}
+            <Button type="submit" size="lg" className="w-full h-12 rounded-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white text-base shadow-lg">
+              <MessageCircle className="h-5 w-5 mr-2"/> Send Enquiry on WhatsApp
             </Button>
             <p className="text-xs text-muted-foreground text-center flex items-center justify-center gap-1">
               <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500"/> We respect your privacy. No spam, ever.
