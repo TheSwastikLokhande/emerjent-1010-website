@@ -9,12 +9,7 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Name and phone are required' }, { status: 400 })
     }
 
-    const accessKey = process.env.WEB3FORMS_KEY || process.env.NEXT_PUBLIC_WEB3FORMS_KEY
-
-    if (!accessKey) {
-      console.warn('Web3Forms access key not configured in environment variables.')
-      return NextResponse.json({ ok: false, warning: 'WEB3FORMS_KEY environment variable missing' })
-    }
+    const accessKey = process.env.WEB3FORMS_KEY || process.env.NEXT_PUBLIC_WEB3FORMS_KEY || '0161f088-7001-4cae-8865-4b757eb4fd73'
 
     const res = await fetch('https://api.web3forms.com/submit', {
       method: 'POST',
