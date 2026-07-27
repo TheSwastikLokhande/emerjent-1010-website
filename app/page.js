@@ -460,6 +460,13 @@ function MaintenanceEnquiryForm({ serviceTitle, onClose }) {
       toast.error('Please enter your name and phone number.')
       return
     }
+
+    fetch('/api/send-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...form, type: `maintenance: ${serviceTitle}` }),
+    }).catch(err => console.error('Email dispatch error:', err))
+
     const messageLines = [
       `Hi 1010 Computers, I am interested in ${serviceTitle}:`,
       ``,
@@ -673,6 +680,13 @@ function FabricationEnquiryForm({ serviceTitle, onClose }) {
       toast.error('Please enter your name and phone number.')
       return
     }
+
+    fetch('/api/send-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...form, type: `fabrication: ${serviceTitle}` }),
+    }).catch(err => console.error('Email dispatch error:', err))
+
     const messageLines = [
       `Hi 1010 Computers, I am interested in ${serviceTitle}:`,
       ``,
@@ -1113,6 +1127,13 @@ function Contact() {
       toast.error('Please enter your name and phone number.')
       return
     }
+
+    fetch('/api/send-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...form, type: 'contact-form' }),
+    }).catch(err => console.error('Email dispatch error:', err))
+
     const messageLines = [
       `Hi 1010 Computers, I have an enquiry:`,
       ``,
