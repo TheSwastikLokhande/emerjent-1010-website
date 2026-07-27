@@ -23,6 +23,14 @@ import {
   testimonials, faqs, galleryCategories, galleryImages,
 } from '@/lib/site-config'
 
+function LayoutContainer({ children, className = '', ...props }) {
+  return (
+    <div className={`site-container ${className}`} {...props}>
+      {children}
+    </div>
+  )
+}
+
 const services = [
   { icon: Laptop, title: 'Laptop Sales', desc: 'New & pre-owned laptops from top brands with warranty.', gradient: 'from-blue-500 to-cyan-500' },
   { icon: Monitor, title: 'Desktop Sales', desc: 'Home, office and premium desktops — new & refurbished.', gradient: 'from-indigo-500 to-blue-500' },
@@ -204,16 +212,16 @@ function Nav() {
         className="absolute bottom-0 left-0 right-0 h-[3px] bg-gradient-to-r from-blue-600 via-indigo-500 to-fuchsia-500 origin-[0%] shadow-[0_1px_10px_rgba(99,102,241,0.8)] z-50"
         style={{ scaleX }}
       />
-      <div className="container mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">
-        <a href="#home" className="flex items-center gap-2 font-semibold text-lg tracking-tight">
+      <LayoutContainer className="h-16 flex items-center justify-between">
+        <a href="#home" className="flex items-center gap-2 font-semibold text-lg tracking-tight shrink-0">
           <span>1010 <span className="text-blue-600 dark:text-blue-400">Computers</span></span>
         </a>
-        <nav className="hidden lg:flex items-center gap-7 text-sm font-medium text-muted-foreground">
+        <nav className="hidden lg:flex items-center justify-center gap-7 lg:gap-8 text-sm font-medium text-muted-foreground flex-1 mx-8">
           {navLinks.map(l => (
             <a key={l.href} href={l.href} className="hover:text-foreground transition-colors">{l.label}</a>
           ))}
         </nav>
-        <div className="hidden md:flex items-center gap-2">
+        <div className="hidden md:flex items-center gap-2 shrink-0">
           <ThemeToggle/>
           <a href={`tel:${SITE.phoneRaw}`}><Button size="sm" variant="outline" className="rounded-full"><Phone className="h-4 w-4 mr-1.5"/>Call</Button></a>
           <a href={`https://wa.me/${SITE.whatsappRaw}`} target="_blank" rel="noreferrer"><Button size="sm" className="rounded-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white"><MessageCircle className="h-4 w-4 mr-1.5"/>WhatsApp</Button></a>
@@ -224,7 +232,7 @@ function Nav() {
             {open ? <X className="h-6 w-6"/> : <Menu className="h-6 w-6"/>}
           </button>
         </div>
-      </div>
+      </LayoutContainer>
       {open && (
         <div className="lg:hidden bg-background/95 backdrop-blur-xl border-t border-border">
           <div className="px-6 py-4 flex flex-col gap-3">
@@ -251,11 +259,12 @@ function Hero() {
       <div className="absolute -z-10 top-40 left-[-10%] w-[500px] h-[500px] bg-fuchsia-500/10 rounded-full blur-3xl"></div>
       <div className="absolute -z-10 inset-0 bg-[linear-gradient(to_right,#e2e8f050_1px,transparent_1px),linear-gradient(to_bottom,#e2e8f050_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#1e293b50_1px,transparent_1px),linear-gradient(to_bottom,#1e293b50_1px,transparent_1px)] bg-[size:44px_44px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_60%,transparent_100%)]"></div>
 
-      <div className="container mx-auto max-w-7xl px-6 grid lg:grid-cols-2 gap-12 items-center">
+      <LayoutContainer className="grid lg:grid-cols-12 gap-8 lg:gap-10 xl:gap-12 items-center">
         <motion.div
           initial={prefersReduced ? {} : { opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: 'easeOut' }}
+          className="lg:col-span-7 xl:col-span-7"
         >
           <div className="inline-flex items-center gap-2 rounded-full bg-background border border-border shadow-sm px-3 py-1.5 text-xs font-medium">
             <span className="flex items-center gap-1"><Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400"/>{SITE.rating}★</span>
@@ -264,10 +273,10 @@ function Hero() {
             <span className="text-muted-foreground">·</span>
             <span>Since {SITE.establishedYear}</span>
           </div>
-          <h1 className="mt-6 text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight leading-[1.05]">
+          <h1 className="mt-6 text-4xl sm:text-5xl lg:text-5xl xl:text-6xl font-semibold tracking-tight leading-[1.05]">
             Pune&apos;s <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-fuchsia-600 bg-clip-text text-transparent">Trusted</span> Computer &amp; Laptop Experts.
           </h1>
-          <p className="mt-6 text-lg text-muted-foreground max-w-xl leading-relaxed">
+          <p className="mt-6 text-lg text-muted-foreground max-w-2xl lg:max-w-3xl leading-relaxed">
             From custom gaming rigs to enterprise deployments, laptop repairs to data recovery — we&apos;ve served Kothrud, Pune with honest pricing and expert care for {yearsExperience()}+ years.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
@@ -293,9 +302,9 @@ function Hero() {
           initial={prefersReduced ? {} : { opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
-          className="relative"
+          className="relative lg:col-span-5 xl:col-span-5"
         >
-          <div className="relative max-w-[450px] mx-auto">
+          <div className="relative max-w-[540px] xl:max-w-[580px] w-full mx-auto lg:ml-auto">
             <div className="absolute inset-0 rounded-[28px] bg-gradient-to-br from-blue-600 via-indigo-600 to-fuchsia-600 blur-2xl opacity-25"></div>
             <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-border/60 bg-slate-900 group">
               <Image
@@ -309,7 +318,7 @@ function Hero() {
             </div>
           </div>
         </motion.div>
-      </div>
+      </LayoutContainer>
     </section>
   )
 }
@@ -317,8 +326,8 @@ function Hero() {
 function TrustBadgesStrip() {
   return (
     <section className="py-6 border-y border-border bg-muted/30">
-      <div className="container mx-auto max-w-7xl px-6">
-        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm">
+      <LayoutContainer>
+        <div className="flex flex-wrap items-center justify-center gap-x-8 md:gap-x-12 gap-y-3.5 text-sm">
           {trustBadges.map((b) => (
             <div key={b} className="flex items-center gap-1.5 text-muted-foreground">
               <CheckCircle2 className="h-4 w-4 text-emerald-500"/>
@@ -326,7 +335,7 @@ function TrustBadgesStrip() {
             </div>
           ))}
         </div>
-      </div>
+      </LayoutContainer>
     </section>
   )
 }
@@ -350,7 +359,7 @@ function Counter({ to, suffix = '', duration = 1.8 }) {
 function StatsSection() {
   return (
     <section className="py-20 md:py-24 bg-background">
-      <div className="container mx-auto max-w-7xl px-6 grid grid-cols-2 md:grid-cols-4 gap-8">
+      <LayoutContainer className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12">
         {[
           { label: 'Established', to: 2015, suffix: '' },
           { label: 'Years of Experience', to: yearsExperience(), suffix: '+' },
@@ -372,7 +381,7 @@ function StatsSection() {
             <div className="mt-2 text-sm uppercase tracking-wider text-muted-foreground font-medium">{s.label}</div>
           </motion.div>
         ))}
-      </div>
+      </LayoutContainer>
     </section>
   )
 }
@@ -380,8 +389,8 @@ function StatsSection() {
 function About() {
   return (
     <section id="about" className="py-24 md:py-32 bg-muted/30">
-      <div className="container mx-auto max-w-7xl px-6 grid lg:grid-cols-5 gap-12 items-center">
-        <div className="lg:col-span-3">
+      <LayoutContainer className="grid lg:grid-cols-12 gap-8 xl:gap-12 items-center">
+        <div className="lg:col-span-7">
           <Badge className="rounded-full bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 hover:bg-blue-50 border-0">About Us</Badge>
           <h2 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight">
             {yearsExperience()}+ years of honest tech expertise in Kothrud.
@@ -396,7 +405,7 @@ function About() {
             <Star className="h-4 w-4 fill-amber-400 text-amber-400"/> Trusted by Students, Gamers &amp; Businesses Across Pune
           </div>
         </div>
-        <div className="lg:col-span-2 grid grid-cols-2 gap-4">
+        <div className="lg:col-span-5 grid grid-cols-2 gap-4 md:gap-5">
           {[
             { icon: Award, label: 'Since 2015', v: `${yearsExperience()}+ years` },
             { icon: Star, label: 'Rating', v: '4.9★' },
@@ -410,7 +419,7 @@ function About() {
             </div>
           ))}
         </div>
-      </div>
+      </LayoutContainer>
     </section>
   )
 }
@@ -418,8 +427,8 @@ function About() {
 function Services() {
   return (
     <section id="services" className="py-24 md:py-32 bg-background">
-      <div className="container mx-auto max-w-7xl px-6">
-        <div className="max-w-2xl">
+      <LayoutContainer>
+        <div className="max-w-3xl">
           <Badge className="rounded-full bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 hover:bg-blue-50 border-0">Our Services</Badge>
           <h2 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight">Everything you need — under one roof.</h2>
           <p className="mt-4 text-lg text-muted-foreground">Sales, repairs, custom builds and enterprise IT — served with the same honest, expert care since 2015.</p>
@@ -427,14 +436,14 @@ function Services() {
         <div className="mt-14 grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5">
           {services.map((s, i) => <ServiceCard key={s.title} {...s} delay={i * 0.05}/>)}
         </div>
-      </div>
+      </LayoutContainer>
     </section>
   )
 }
 
 function SectionHeading({ label, title, subtitle }) {
   return (
-    <div className="max-w-2xl">
+    <div className="max-w-3xl">
       <Badge className="rounded-full bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 hover:bg-blue-50 border-0">{label}</Badge>
       <h2 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight">{title}</h2>
       <p className="mt-4 text-lg text-muted-foreground">{subtitle}</p>
@@ -509,7 +518,7 @@ function MaintenanceSection() {
 
   return (
     <section id="maintenance" className="py-24 md:py-32 bg-muted/30">
-      <div className="container mx-auto max-w-7xl px-6">
+      <LayoutContainer>
         <SectionHeading
           label="Computer Care & Maintenance"
           title="Professional Deep Cleaning, Thermal Repasting & Performance Optimization"
@@ -546,7 +555,7 @@ function MaintenanceSection() {
           ))}
         </div>
 
-        <div className="mt-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
           {maintenanceBenefits.map((benefit, i) => (
             <motion.div
               key={benefit.title}
@@ -557,8 +566,8 @@ function MaintenanceSection() {
               className="rounded-3xl bg-white/90 dark:bg-slate-950/80 border border-border p-5 shadow-sm backdrop-blur-xl"
             >
               <div className="flex items-center gap-3">
-                <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-600 text-white">✔</span>
-                <p className="font-semibold text-foreground">{benefit.title}</p>
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-600 text-white shrink-0">✔</span>
+                <p className="font-semibold text-foreground text-sm">{benefit.title}</p>
               </div>
             </motion.div>
           ))}
@@ -569,7 +578,7 @@ function MaintenanceSection() {
             <Button size="lg" className="rounded-full h-14 px-8 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg hover:from-blue-700 hover:to-indigo-700">Book Maintenance Service</Button>
           </a>
         </div>
-      </div>
+      </LayoutContainer>
 
       <AnimatePresence>
         {selectedService && (
@@ -728,14 +737,14 @@ function FabricationSection() {
 
   return (
     <section id="fabrication" className="py-24 md:py-32 bg-background">
-      <div className="container mx-auto max-w-7xl px-6">
+      <LayoutContainer>
         <SectionHeading
           label="Laptop Fabrication & Restoration"
           title="Precision Repairs for Damaged Laptop Bodies & Hinges"
           subtitle="Our laptop fabrication service restores damaged laptop bodies and structural components using professional repair techniques. Instead of replacing expensive assemblies, we repair and reinforce damaged parts whenever possible, helping customers save money while extending the life of their devices."
         />
 
-        <div className="mt-14 grid gap-5 lg:grid-cols-3 xl:grid-cols-6">
+        <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
           {fabricationServices.map((service, i) => (
             <motion.div
               key={service.title}
@@ -766,7 +775,7 @@ function FabricationSection() {
         </div>
 
         <div className="mt-16 overflow-hidden rounded-3xl border border-border bg-muted/30 p-6">
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
             {fabricationReasons.map((reason, i) => (
               <motion.div
                 key={reason.title}
@@ -776,8 +785,8 @@ function FabricationSection() {
                 transition={{ duration: 0.45, delay: i * 0.05, ease: 'easeOut' }}
                 className="flex items-center gap-3 rounded-3xl bg-background border border-border p-5 shadow-sm"
               >
-                <div className="h-11 w-11 rounded-2xl bg-blue-600 text-white grid place-items-center shadow-lg">✓</div>
-                <p className="font-semibold text-foreground">{reason.title}</p>
+                <div className="h-11 w-11 rounded-2xl bg-blue-600 text-white grid place-items-center shadow-lg shrink-0">✓</div>
+                <p className="font-semibold text-foreground text-sm">{reason.title}</p>
               </motion.div>
             ))}
           </div>
@@ -788,7 +797,7 @@ function FabricationSection() {
             <Button size="lg" className="rounded-full h-14 px-8 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg hover:from-blue-700 hover:to-indigo-700">Request Fabrication Service</Button>
           </a>
         </div>
-      </div>
+      </LayoutContainer>
 
       <AnimatePresence>
         {selectedService && (
@@ -912,14 +921,14 @@ function BuildPC() {
       <div className="absolute inset-0 -z-10 bg-gradient-to-b from-slate-100 via-slate-50 to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950"></div>
       <div className="absolute -z-10 inset-0 bg-[radial-gradient(ellipse_at_top,rgba(148,163,184,0.18),transparent_50%)] dark:bg-[radial-gradient(ellipse_at_top,rgba(148,163,184,0.08),transparent_50%)]"></div>
       <div className="absolute -z-10 inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(148,163,184,0.12),transparent_50%)] dark:bg-[radial-gradient(ellipse_at_bottom,rgba(148,163,184,0.06),transparent_50%)]"></div>
-      <div className="container mx-auto max-w-7xl px-6">
-        <div className="max-w-2xl">
+      <LayoutContainer>
+        <div className="max-w-3xl">
           <Badge className="rounded-full bg-slate-200 text-slate-900 hover:bg-slate-300 border-0 backdrop-blur dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700">Custom Builds</Badge>
           <h2 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-slate-950 dark:text-white">Build your dream PC — the way you imagined it.</h2>
           <p className="mt-4 text-lg text-slate-600 dark:text-slate-300">Whether you&apos;re chasing 4K gaming, editing 8K footage, or deploying 50 office machines — our experts design and assemble it, tested and ready.</p>
         </div>
 
-        <div className="mt-14 grid md:grid-cols-3 gap-5">
+        <div className="mt-14 grid md:grid-cols-3 gap-6 lg:gap-8">
           {steps.map((s, i) => (
             <motion.div key={s.n} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.1 }} className="relative rounded-2xl bg-slate-50 border border-slate-200 p-6 hover:bg-slate-100 transition-colors dark:bg-slate-950 dark:border-slate-800 dark:hover:bg-slate-900">
               <div className="flex items-center justify-between">
@@ -934,7 +943,7 @@ function BuildPC() {
 
         <div className="mt-16">
           <h3 className="text-xl font-semibold text-slate-950 dark:text-white mb-6">Popular build types</h3>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5">
             {buildTypes.map((b, i) => (
               <motion.div key={b.name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.05 }} className="group relative rounded-2xl bg-slate-100 border border-slate-200 backdrop-blur-xl p-5 hover:bg-slate-200 transition-all hover:-translate-y-1 dark:bg-white/5 dark:border-white/10 dark:hover:border-white/30">
                 <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${b.tone} opacity-0 group-hover:opacity-100 transition-opacity`}></div>
@@ -957,7 +966,7 @@ function BuildPC() {
             <Button size="lg" variant="outline" className="rounded-full h-12 px-6 text-base bg-transparent text-white border-white/30 hover:bg-white/10 hover:text-white">Ask an Expert</Button>
           </a>
         </div>
-      </div>
+      </LayoutContainer>
     </section>
   )
 }
@@ -965,14 +974,14 @@ function BuildPC() {
 function Brands() {
   return (
     <section className="py-16 md:py-20 bg-background border-y border-border">
-      <div className="container mx-auto max-w-7xl px-6">
+      <LayoutContainer>
         <p className="text-center text-sm uppercase tracking-widest text-muted-foreground font-medium">Brands we deal in</p>
-        <div className="mt-8 flex flex-wrap justify-center items-center gap-x-10 gap-y-5">
+        <div className="mt-8 flex flex-wrap justify-center items-center gap-x-12 md:gap-x-16 gap-y-6">
           {brands.map(b => (
             <span key={b} className="text-xl md:text-2xl font-semibold text-muted-foreground/70 hover:text-foreground transition-colors">{b}</span>
           ))}
         </div>
-      </div>
+      </LayoutContainer>
     </section>
   )
 }
@@ -980,12 +989,12 @@ function Brands() {
 function WhyChooseUs() {
   return (
     <section className="py-24 md:py-32 bg-muted/30">
-      <div className="container mx-auto max-w-7xl px-6">
-        <div className="max-w-2xl">
+      <LayoutContainer>
+        <div className="max-w-3xl">
           <Badge className="rounded-full bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 hover:bg-blue-50 border-0">Why Choose Us</Badge>
           <h2 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight">The reasons Pune keeps coming back.</h2>
         </div>
-        <div className="mt-12 grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="mt-12 grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {whyChooseUs.map((w, i) => (
             <motion.div key={w.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.05 }} className="rounded-2xl bg-background border border-border p-6 shadow-sm hover:shadow-md transition-shadow">
               <div className="grid place-items-center h-10 w-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white"><CheckCircle2 className="h-5 w-5"/></div>
@@ -994,7 +1003,7 @@ function WhyChooseUs() {
             </motion.div>
           ))}
         </div>
-      </div>
+      </LayoutContainer>
     </section>
   )
 }
@@ -1009,8 +1018,8 @@ function Testimonials() {
   const item = testimonials[i]
   return (
     <section id="reviews" className="py-24 md:py-32 bg-background">
-      <div className="container mx-auto max-w-7xl px-6">
-        <div className="max-w-2xl">
+      <LayoutContainer>
+        <div className="max-w-3xl">
           <Badge className="rounded-full bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 hover:bg-blue-50 border-0">Reviews</Badge>
           <h2 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight">Loved by our customers.</h2>
           <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-900 px-3 py-1 text-sm text-amber-800 dark:text-amber-300">
@@ -1019,7 +1028,7 @@ function Testimonials() {
         </div>
 
         <div className="mt-12 relative">
-          <motion.div key={i} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="max-w-3xl mx-auto rounded-3xl bg-gradient-to-br from-blue-50 to-fuchsia-50 dark:from-blue-950/50 dark:to-fuchsia-950/30 border border-border p-8 md:p-12 shadow-xl">
+          <motion.div key={i} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="max-w-4xl lg:max-w-5xl mx-auto rounded-3xl bg-gradient-to-br from-blue-50 to-fuchsia-50 dark:from-blue-950/50 dark:to-fuchsia-950/30 border border-border p-8 md:p-12 shadow-xl">
             <div className="flex items-center gap-1 text-amber-500 mb-4">
               {[...Array(item.rating)].map((_, k) => <Star key={k} className="h-5 w-5 fill-current"/>)}
             </div>
@@ -1040,7 +1049,7 @@ function Testimonials() {
           </div>
         </div>
         <p className="mt-6 text-xs text-center text-muted-foreground">Testimonials shown are placeholders and will be replaced with real customer reviews.</p>
-      </div>
+      </LayoutContainer>
     </section>
   )
 }
@@ -1050,8 +1059,8 @@ function Gallery() {
   const filtered = cat === 'all' ? galleryImages : galleryImages.filter(g => g.cat === cat)
   return (
     <section id="gallery" className="py-24 md:py-32 bg-muted/30">
-      <div className="container mx-auto max-w-7xl px-6">
-        <div className="max-w-2xl">
+      <LayoutContainer>
+        <div className="max-w-3xl">
           <Badge className="rounded-full bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 hover:bg-blue-50 border-0">Gallery</Badge>
           <h2 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight">A glimpse inside the workshop.</h2>
           <p className="mt-4 text-muted-foreground">Real builds, real repairs, real store. Placeholder images below — swap files in <code className="text-xs px-1.5 py-0.5 rounded bg-muted">/public/images</code> to update.</p>
@@ -1064,7 +1073,7 @@ function Gallery() {
           ))}
         </div>
 
-        <div className="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
           {filtered.map((g, k) => (
             <motion.div key={g.src + k} layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3 }} className={`relative overflow-hidden rounded-2xl bg-background border border-border shadow-sm group ${k % 5 === 0 ? 'aspect-[4/5]' : 'aspect-square'}`}>
               <Image src={g.src} alt={g.alt} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 768px) 50vw, 25vw"/>
@@ -1073,7 +1082,7 @@ function Gallery() {
             </motion.div>
           ))}
         </div>
-      </div>
+      </LayoutContainer>
     </section>
   )
 }
@@ -1089,7 +1098,7 @@ function FilterChip({ active, onClick, label }) {
 function FAQ() {
   return (
     <section id="faq" className="py-24 md:py-32 bg-background">
-      <div className="container mx-auto max-w-3xl px-6">
+      <LayoutContainer className="max-w-4xl">
         <div className="text-center">
           <Badge className="rounded-full bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 hover:bg-blue-50 border-0">FAQ</Badge>
           <h2 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight">Common questions.</h2>
@@ -1102,7 +1111,7 @@ function FAQ() {
             </AccordionItem>
           ))}
         </Accordion>
-      </div>
+      </LayoutContainer>
     </section>
   )
 }
@@ -1138,8 +1147,8 @@ function Contact() {
 
   return (
     <section id="contact" className="py-24 md:py-32 bg-muted/30">
-      <div className="container mx-auto max-w-7xl px-6 grid lg:grid-cols-2 gap-12">
-        <div>
+      <LayoutContainer className="grid lg:grid-cols-12 gap-8 lg:gap-12">
+        <div className="lg:col-span-7">
           <Badge className="rounded-full bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 hover:bg-blue-50 border-0">Get in touch</Badge>
           <h2 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight">Visit us or drop a message.</h2>
           <p className="mt-4 text-lg text-muted-foreground">Walk in for a quick diagnosis, or send a message — we usually reply within minutes on WhatsApp.</p>
@@ -1170,7 +1179,7 @@ function Contact() {
           </div>
         </div>
 
-        <Card className="p-6 md:p-8 rounded-3xl shadow-xl bg-background h-fit">
+        <Card className="lg:col-span-5 p-6 md:p-8 rounded-3xl shadow-xl bg-background h-fit">
           <h3 className="text-xl font-semibold">Send an enquiry</h3>
           <p className="text-sm text-muted-foreground mt-1">Book a service, ask about custom builds, or get a quote.</p>
           <form onSubmit={submit} className="mt-6 space-y-4">
@@ -1194,7 +1203,7 @@ function Contact() {
             </p>
           </form>
         </Card>
-      </div>
+      </LayoutContainer>
     </section>
   )
 }
@@ -1216,19 +1225,19 @@ function ContactItem({ icon: Icon, title, children }) {
 function Footer() {
   return (
     <footer className="bg-slate-950 text-slate-300 py-16">
-      <div className="container mx-auto max-w-7xl px-6 grid md:grid-cols-4 gap-10">
-        <div className="md:col-span-2">
+      <LayoutContainer className="grid grid-cols-1 md:grid-cols-12 gap-10 lg:gap-12">
+        <div className="md:col-span-6">
           <div className="flex items-center gap-2 font-semibold text-white text-lg">
             1010 Computers
           </div>
-          <p className="mt-4 text-slate-400 max-w-sm">Pune&apos;s trusted destination for computer sales, laptop repairs, custom gaming PCs and enterprise IT since 2015.</p>
+          <p className="mt-4 text-slate-400 max-w-md">Pune&apos;s trusted destination for computer sales, laptop repairs, custom gaming PCs and enterprise IT since 2015.</p>
           <div className="mt-6 flex gap-3">
             <a href={SITE.socials.facebook} target="_blank" rel="noreferrer" aria-label="Facebook" className="h-10 w-10 rounded-full bg-white/5 border border-white/10 grid place-items-center hover:bg-white/10 transition"><Facebook className="h-4 w-4"/></a>
             <a href={SITE.socials.instagram} target="_blank" rel="noreferrer" aria-label="Instagram" className="h-10 w-10 rounded-full bg-white/5 border border-white/10 grid place-items-center hover:bg-white/10 transition"><Instagram className="h-4 w-4"/></a>
             <a href={SITE.socials.google} target="_blank" rel="noreferrer" aria-label="Google Business" className="h-10 w-10 rounded-full bg-white/5 border border-white/10 grid place-items-center hover:bg-white/10 transition"><Globe className="h-4 w-4"/></a>
           </div>
         </div>
-        <div>
+        <div className="md:col-span-3">
           <div className="text-sm uppercase tracking-wider text-white font-semibold">Quick Links</div>
           <ul className="mt-4 space-y-2 text-sm">
             {navLinks.slice(0, 6).map(l => (
@@ -1236,7 +1245,7 @@ function Footer() {
             ))}
           </ul>
         </div>
-        <div>
+        <div className="md:col-span-3">
           <div className="text-sm uppercase tracking-wider text-white font-semibold">Contact</div>
           <ul className="mt-4 space-y-2 text-sm text-slate-400">
             <li>{SITE.address.line1}</li>
@@ -1246,11 +1255,11 @@ function Footer() {
             <li><a href={`https://wa.me/${SITE.whatsappRaw}`} className="hover:text-white">WhatsApp us</a></li>
           </ul>
         </div>
-      </div>
-      <div className="container mx-auto max-w-7xl px-6 mt-10 pt-6 border-t border-white/10 flex flex-col md:flex-row gap-3 items-center justify-between text-xs text-slate-500">
+      </LayoutContainer>
+      <LayoutContainer className="mt-10 pt-6 border-t border-white/10 flex flex-col md:flex-row gap-3 items-center justify-between text-xs text-slate-500">
         <div>© {new Date().getFullYear()} 1010 Computers. All rights reserved.</div>
         <div>Made with ♥ in Kothrud, Pune</div>
-      </div>
+      </LayoutContainer>
     </footer>
   )
 }
