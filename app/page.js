@@ -452,7 +452,7 @@ function SectionHeading({ label, title, subtitle }) {
 }
 
 function MaintenanceEnquiryForm({ serviceTitle, onClose }) {
-  const [form, setForm] = useState({ name: '', phone: '', message: `Hi, I am interested in ${serviceTitle} service.` })
+  const [form, setForm] = useState({ name: '', phone: '', email: '', message: `Hi, I am interested in ${serviceTitle} service.` })
 
   const submit = (e) => {
     e.preventDefault()
@@ -466,6 +466,9 @@ function MaintenanceEnquiryForm({ serviceTitle, onClose }) {
       `*Name:* ${form.name.trim()}`,
       `*Phone:* ${form.phone.trim()}`,
     ]
+    if (form.email.trim()) {
+      messageLines.push(`*Email:* ${form.email.trim()}`)
+    }
     if (form.message.trim()) {
       messageLines.push(`*Message:* ${form.message.trim()}`)
     }
@@ -473,7 +476,7 @@ function MaintenanceEnquiryForm({ serviceTitle, onClose }) {
     const url = `https://wa.me/${SITE.whatsappRaw}?text=${encodeURIComponent(text)}`
     window.open(url, '_blank')
     toast.success('Opening WhatsApp...')
-    setForm({ name: '', phone: '', message: '' })
+    setForm({ name: '', phone: '', email: '', message: '' })
     if (onClose) onClose()
   }
 
@@ -486,6 +489,10 @@ function MaintenanceEnquiryForm({ serviceTitle, onClose }) {
       <div>
         <label className="text-xs font-medium">Phone Number</label>
         <Input value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} placeholder="+91 98XXX XXXXX" className="mt-1.5 h-10 rounded-xl text-sm" required/>
+      </div>
+      <div>
+        <label className="text-xs font-medium">Email Address (Optional)</label>
+        <Input type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} placeholder="rohan@example.com" className="mt-1.5 h-10 rounded-xl text-sm"/>
       </div>
       <div>
         <label className="text-xs font-medium">Message</label>
@@ -658,7 +665,7 @@ function MaintenanceSection() {
 }
 
 function FabricationEnquiryForm({ serviceTitle, onClose }) {
-  const [form, setForm] = useState({ name: '', phone: '', message: `Hi, I am interested in ${serviceTitle} service.` })
+  const [form, setForm] = useState({ name: '', phone: '', email: '', message: `Hi, I am interested in ${serviceTitle} service.` })
 
   const submit = (e) => {
     e.preventDefault()
@@ -672,6 +679,9 @@ function FabricationEnquiryForm({ serviceTitle, onClose }) {
       `*Name:* ${form.name.trim()}`,
       `*Phone:* ${form.phone.trim()}`,
     ]
+    if (form.email.trim()) {
+      messageLines.push(`*Email:* ${form.email.trim()}`)
+    }
     if (form.message.trim()) {
       messageLines.push(`*Message:* ${form.message.trim()}`)
     }
@@ -679,7 +689,7 @@ function FabricationEnquiryForm({ serviceTitle, onClose }) {
     const url = `https://wa.me/${SITE.whatsappRaw}?text=${encodeURIComponent(text)}`
     window.open(url, '_blank')
     toast.success('Opening WhatsApp...')
-    setForm({ name: '', phone: '', message: '' })
+    setForm({ name: '', phone: '', email: '', message: '' })
     if (onClose) onClose()
   }
 
@@ -692,6 +702,10 @@ function FabricationEnquiryForm({ serviceTitle, onClose }) {
       <div>
         <label className="text-xs font-medium">Phone Number</label>
         <Input value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} placeholder="+91 98XXX XXXXX" className="mt-1.5 h-10 rounded-xl text-sm" required/>
+      </div>
+      <div>
+        <label className="text-xs font-medium">Email Address (Optional)</label>
+        <Input type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} placeholder="rohan@example.com" className="mt-1.5 h-10 rounded-xl text-sm"/>
       </div>
       <div>
         <label className="text-xs font-medium">Message</label>
@@ -1091,7 +1105,7 @@ function FAQ() {
 }
 
 function Contact() {
-  const [form, setForm] = useState({ name: '', phone: '', message: '' })
+  const [form, setForm] = useState({ name: '', phone: '', email: '', message: '' })
 
   const submit = (e) => {
     e.preventDefault()
@@ -1105,6 +1119,9 @@ function Contact() {
       `*Name:* ${form.name.trim()}`,
       `*Phone:* ${form.phone.trim()}`,
     ]
+    if (form.email.trim()) {
+      messageLines.push(`*Email:* ${form.email.trim()}`)
+    }
     if (form.message.trim()) {
       messageLines.push(`*Message:* ${form.message.trim()}`)
     }
@@ -1112,7 +1129,7 @@ function Contact() {
     const url = `https://wa.me/${SITE.whatsappRaw}?text=${encodeURIComponent(text)}`
     window.open(url, '_blank')
     toast.success('Opening WhatsApp...')
-    setForm({ name: '', phone: '', message: '' })
+    setForm({ name: '', phone: '', email: '', message: '' })
   }
 
   const mapQ = encodeURIComponent(SITE.mapQuery || `${SITE.address.line1}, ${SITE.address.line2}, ${SITE.address.city}`)
@@ -1162,6 +1179,10 @@ function Contact() {
             <div>
               <label className="text-sm font-medium">Phone number</label>
               <Input value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} placeholder="+91 98XXX XXXXX" className="mt-1.5 h-11 rounded-xl" required/>
+            </div>
+            <div>
+              <label className="text-sm font-medium">Email address (optional)</label>
+              <Input type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} placeholder="rohan@example.com" className="mt-1.5 h-11 rounded-xl"/>
             </div>
             <div>
               <label className="text-sm font-medium">Message</label>
