@@ -14,14 +14,16 @@ import { toast } from 'sonner'
 import {
   Laptop, Monitor, Gamepad2, Building2, Wrench, HardDrive, Cpu,
   Keyboard, Database, Sparkles, Phone, MessageCircle, ArrowUp,
-  Star, ShieldCheck, Zap, IndianRupee, Award, ChevronRight, Menu, X,
+  Star, ShieldCheck, Zap, IndianRupee, Award, ChevronRight, ChevronLeft, Menu, X,
   MapPin, Clock, Mail, ArrowRight, CheckCircle2, Sun, Moon, Facebook, Instagram, Globe,
   Fan, Thermometer, Gauge, Hammer,
 } from 'lucide-react'
 import {
   SITE, yearsExperience, trustBadges, brands, whyChooseUs,
-  testimonials, faqs, galleryCategories, galleryImages,
+  testimonials, googleReviewsConfig, faqs, galleryCategories, galleryImages,
 } from '@/lib/site-config'
+import { sendEnquiryEmail } from '@/lib/send-enquiry'
+import googleReviewsStore from '@/lib/google-reviews.json'
 
 function LayoutContainer({ children, className = '', ...props }) {
   return (
@@ -30,6 +32,35 @@ function LayoutContainer({ children, className = '', ...props }) {
     </div>
   )
 }
+
+function SafeBeforeAfterImage({ src, fallbackSrc, alt, badgeLabel, badgeBg }) {
+  const [imgSrc, setImgSrc] = useState(src)
+
+  useEffect(() => {
+    setImgSrc(src)
+  }, [src])
+
+  return (
+    <div className="relative rounded-2xl overflow-hidden aspect-video border border-border">
+      <Image
+        src={imgSrc}
+        alt={alt}
+        fill
+        className="object-cover"
+        sizes="(max-width: 768px) 50vw, 250px"
+        onError={() => {
+          if (fallbackSrc && imgSrc !== fallbackSrc) {
+            setImgSrc(fallbackSrc)
+          }
+        }}
+      />
+      <span className={`absolute bottom-2 left-2 ${badgeBg} text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider shadow`}>
+        {badgeLabel}
+      </span>
+    </div>
+  )
+}
+
 
 const services = [
   { icon: Laptop, title: 'Laptop Sales', desc: 'New & pre-owned laptops from top brands with warranty.', gradient: 'from-blue-500 to-cyan-500' },
@@ -58,40 +89,50 @@ const maintenanceServices = [
     title: 'Internal Deep Cleaning',
     items: ['Internal dust removal', 'Cooling fan cleaning', 'Heat sink cleaning', 'Air vent cleaning', 'Professional internal cleaning'],
     gradient: 'from-cyan-500 to-blue-500',
-    beforeImage: 'https://images.unsplash.com/photo-1588508065123-287b28e013da',
-    afterImage: 'https://images.unsplash.com/photo-1542751371-adc38448a05e',
+    beforeImage: '/repairs/cleaning-before.jpg',
+    afterImage: '/repairs/cleaning-after.jpg',
+    fallbackBeforeImage: 'https://images.unsplash.com/photo-1588508065123-287b28e013da',
+    fallbackAfterImage: 'https://images.unsplash.com/photo-1542751371-adc38448a05e',
   },
   {
     icon: Thermometer,
     title: 'Thermal Repasting',
     items: ['CPU Thermal Paste Replacement', 'GPU Thermal Repasting (Supported Models)', 'Premium Thermal Compound', 'Temperature Optimization', 'Cooling Performance Testing'],
     gradient: 'from-indigo-500 to-blue-500',
-    beforeImage: 'https://images.unsplash.com/photo-1591370874773-6702e8f12fd8',
-    afterImage: 'https://images.unsplash.com/photo-1518770660439-4636190af475',
+    beforeImage: '/repairs/thermal-before.jpg',
+    afterImage: '/repairs/thermal-after.jpg',
+    fallbackBeforeImage: 'https://images.unsplash.com/photo-1591370874773-6702e8f12fd8',
+    fallbackAfterImage: 'https://images.unsplash.com/photo-1518770660439-4636190af475',
   },
   {
     icon: Gauge,
     title: 'Performance Optimization',
     items: ['Startup Optimization', 'Windows Optimization', 'Driver Updates', 'Temporary File Cleanup', 'System Performance Tuning'],
     gradient: 'from-sky-500 to-indigo-500',
-    beforeImage: 'https://images.unsplash.com/photo-1587831990711-23ca6441447b',
-    afterImage: 'https://images.unsplash.com/photo-1660855552442-1bae49431379',
+    beforeImage: '/repairs/performance-before.jpg',
+    afterImage: '/repairs/performance-after.jpg',
+    fallbackBeforeImage: 'https://images.unsplash.com/photo-1587831990711-23ca6441447b',
+    fallbackAfterImage: 'https://images.unsplash.com/photo-1660855552442-1bae49431379',
   },
   {
     icon: ShieldCheck,
     title: 'Preventive Maintenance',
     items: ['Hardware Health Check', 'Battery Health Inspection', 'SSD/HDD Health Check', 'Cooling System Inspection', 'Fan Performance Testing'],
     gradient: 'from-emerald-500 to-teal-500',
-    beforeImage: 'https://images.unsplash.com/photo-1588508065123-287b28e013da',
-    afterImage: 'https://images.unsplash.com/photo-1550009158-9ebf69173e03',
+    beforeImage: '/repairs/preventive-before.jpg',
+    afterImage: '/repairs/preventive-after.jpg',
+    fallbackBeforeImage: 'https://images.unsplash.com/photo-1588508065123-287b28e013da',
+    fallbackAfterImage: 'https://images.unsplash.com/photo-1550009158-9ebf69173e03',
   },
   {
     icon: Monitor,
     title: 'System Diagnostics',
     items: ['Hardware Diagnostics', 'Temperature Monitoring', 'Memory Testing', 'Storage Testing', 'Performance Benchmarking'],
     gradient: 'from-violet-500 to-fuchsia-500',
-    beforeImage: 'https://images.unsplash.com/photo-1587202372634-32705e3bf49c',
-    afterImage: 'https://images.unsplash.com/photo-1587202372775-e229f172b9d7',
+    beforeImage: '/repairs/diagnostics-before.jpg',
+    afterImage: '/repairs/diagnostics-after.jpg',
+    fallbackBeforeImage: 'https://images.unsplash.com/photo-1587202372634-32705e3bf49c',
+    fallbackAfterImage: 'https://images.unsplash.com/photo-1587202372775-e229f172b9d7',
   },
 ]
 
@@ -110,50 +151,63 @@ const fabricationServices = [
     title: 'Hinge Repair',
     items: ['Broken hinge repair', 'Loose hinge repair', 'Stiff hinge adjustment'],
     gradient: 'from-blue-500 to-cyan-500',
-    beforeImage: 'https://images.unsplash.com/photo-1588508065123-287b28e013da',
-    afterImage: 'https://images.unsplash.com/photo-1542751371-adc38448a05e',
+    beforeImage: '/repairs/hinge-repair-before.jpg',
+    afterImage: '/repairs/hinge-repair-after.jpg',
+    fallbackBeforeImage: 'https://images.unsplash.com/photo-1588508065123-287b28e013da',
+    fallbackAfterImage: 'https://images.unsplash.com/photo-1542751371-adc38448a05e',
   },
   {
     icon: Hammer,
     title: 'Hinge Fabrication',
     items: ['Custom hinge mount fabrication', 'Screw mount reconstruction', 'Metal reinforcement'],
     gradient: 'from-indigo-500 to-violet-500',
-    beforeImage: 'https://images.unsplash.com/photo-1591370874773-6702e8f12fd8',
-    afterImage: 'https://images.unsplash.com/photo-1587831990711-23ca6441447b',
+    beforeImage: '/repairs/hinge-fab-before.jpg',
+    afterImage: '/repairs/hinge-fab-after.jpg',
+    fallbackBeforeImage: 'https://images.unsplash.com/photo-1591370874773-6702e8f12fd8',
+    fallbackAfterImage: 'https://images.unsplash.com/photo-1587831990711-23ca6441447b',
   },
   {
     icon: HardDrive,
     title: 'Laptop Body Repair',
     items: ['Palm rest repair', 'Bottom cover repair', 'LCD back cover repair', 'Chassis repair'],
     gradient: 'from-slate-500 to-slate-700',
-    beforeImage: 'https://images.unsplash.com/photo-1588508065123-287b28e013da',
-    afterImage: 'https://images.unsplash.com/photo-1542751371-adc38448a05e',
+    beforeImage: '/repairs/body-repair-before.jpg',
+    afterImage: '/repairs/body-repair-after.jpg',
+    fallbackBeforeImage: 'https://images.unsplash.com/photo-1588508065123-287b28e013da',
+    fallbackAfterImage: 'https://images.unsplash.com/photo-1542751371-adc38448a05e',
   },
   {
     icon: Wrench,
     title: 'Plastic Welding',
     items: ['Crack repair', 'Structural reinforcement', 'Broken plastic restoration'],
     gradient: 'from-fuchsia-500 to-pink-500',
-    beforeImage: 'https://images.unsplash.com/photo-1591370874773-6702e8f12fd8',
-    afterImage: 'https://images.unsplash.com/photo-1587202372634-32705e3bf49c',
+    beforeImage: '/repairs/plastic-welding-before.jpg',
+    afterImage: '/repairs/plastic-welding-after.jpg',
+    fallbackBeforeImage: 'https://images.unsplash.com/photo-1591370874773-6702e8f12fd8',
+    fallbackAfterImage: 'https://images.unsplash.com/photo-1587202372634-32705e3bf49c',
   },
   {
     icon: Sparkles,
     title: 'Cosmetic Restoration',
     items: ['Surface refinishing', 'Alignment correction', 'Professional finishing'],
     gradient: 'from-blue-500 to-indigo-600',
-    beforeImage: 'https://images.unsplash.com/photo-1588508065123-287b28e013da',
-    afterImage: 'https://images.unsplash.com/photo-1587202372775-e229f172b9d7',
+    beforeImage: '/repairs/cosmetic-before.jpg',
+    afterImage: '/repairs/cosmetic-after.jpg',
+    fallbackBeforeImage: 'https://images.unsplash.com/photo-1588508065123-287b28e013da',
+    fallbackAfterImage: 'https://images.unsplash.com/photo-1587202372775-e229f172b9d7',
   },
   {
     icon: ShieldCheck,
     title: 'Precision Repairs',
     items: ['Internal frame repair', 'Mount rebuilding', 'Structural restoration'],
     gradient: 'from-emerald-500 to-lime-500',
-    beforeImage: 'https://images.unsplash.com/photo-1518770660439-4636190af475',
-    afterImage: 'https://images.unsplash.com/photo-1542751371-adc38448a05e',
+    beforeImage: '/repairs/precision-before.jpg',
+    afterImage: '/repairs/precision-after.jpg',
+    fallbackBeforeImage: 'https://images.unsplash.com/photo-1518770660439-4636190af475',
+    fallbackAfterImage: 'https://images.unsplash.com/photo-1542751371-adc38448a05e',
   },
 ]
+
 
 const fabricationReasons = [
   { title: 'Cost Effective' },
@@ -175,12 +229,47 @@ const navLinks = [
   { href: '#contact', label: 'Contact' },
 ]
 
+function scrollToSection(e, href) {
+  if (e && typeof e.preventDefault === 'function') {
+    e.preventDefault()
+  }
+
+  const targetId = (href || '').replace(/^#/, '')
+  if (!targetId || targetId === 'home') {
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      if (window.location.hash) {
+        window.history.replaceState(null, '', window.location.pathname + window.location.search)
+      }
+    }
+    return
+  }
+
+  if (typeof document !== 'undefined') {
+    const element = document.getElementById(targetId)
+    if (element) {
+      const navOffset = 70
+      const elementPosition = element.getBoundingClientRect().top
+      const offsetPosition = elementPosition + window.scrollY - navOffset
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth',
+      })
+
+      if (typeof window !== 'undefined' && window.location.hash) {
+        window.history.replaceState(null, '', window.location.pathname + window.location.search)
+      }
+    }
+  }
+}
+
 function ThemeToggle() {
-  const { theme, setTheme } = useTheme()
+  const { theme, setTheme, resolvedTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
   useEffect(() => setMounted(true), [])
   if (!mounted) return <div className="h-9 w-9"/>
-  const isDark = theme === 'dark'
+  const isDark = (theme || resolvedTheme) === 'dark'
   return (
     <button
       onClick={() => setTheme(isDark ? 'light' : 'dark')}
@@ -213,12 +302,23 @@ function Nav() {
         style={{ scaleX }}
       />
       <LayoutContainer className="h-16 flex items-center justify-between">
-        <a href="#home" className="flex items-center gap-2 font-semibold text-lg tracking-tight shrink-0">
+        <a
+          href="#home"
+          onClick={(e) => scrollToSection(e, '#home')}
+          className="flex items-center gap-2 font-semibold text-lg tracking-tight shrink-0"
+        >
           <span>1010 <span className="text-blue-600 dark:text-blue-400">Computers</span></span>
         </a>
         <nav className="hidden lg:flex items-center justify-center gap-7 lg:gap-8 text-sm font-medium text-muted-foreground flex-1 mx-8">
           {navLinks.map(l => (
-            <a key={l.href} href={l.href} className="hover:text-foreground transition-colors">{l.label}</a>
+            <a
+              key={l.href}
+              href={l.href}
+              onClick={(e) => scrollToSection(e, l.href)}
+              className="hover:text-foreground transition-colors"
+            >
+              {l.label}
+            </a>
           ))}
         </nav>
         <div className="hidden md:flex items-center gap-2 shrink-0">
@@ -237,7 +337,17 @@ function Nav() {
         <div className="lg:hidden bg-background/95 backdrop-blur-xl border-t border-border">
           <div className="px-6 py-4 flex flex-col gap-3">
             {navLinks.map(l => (
-              <a key={l.href} href={l.href} onClick={() => setOpen(false)} className="py-2 text-muted-foreground hover:text-foreground font-medium">{l.label}</a>
+              <a
+                key={l.href}
+                href={l.href}
+                onClick={(e) => {
+                  setOpen(false)
+                  scrollToSection(e, l.href)
+                }}
+                className="py-2 text-muted-foreground hover:text-foreground font-medium"
+              >
+                {l.label}
+              </a>
             ))}
             <div className="flex gap-2 pt-2">
               <a href={`tel:${SITE.phoneRaw}`} className="flex-1"><Button variant="outline" className="w-full rounded-full"><Phone className="h-4 w-4 mr-1.5"/>Call</Button></a>
@@ -277,7 +387,7 @@ function Hero() {
             Pune&apos;s <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-fuchsia-600 bg-clip-text text-transparent">Trusted</span> Computer &amp; Laptop Experts.
           </h1>
           <p className="mt-6 text-lg text-muted-foreground max-w-2xl lg:max-w-3xl leading-relaxed">
-            From custom gaming rigs to enterprise deployments, laptop repairs to data recovery — we&apos;ve served Kothrud, Pune with honest pricing and expert care for {yearsExperience()}+ years.
+            From custom gaming rigs to enterprise deployments, laptop repairs to data recovery — we&apos;ve served Kothrud, Pune with honest pricing and expert care with {yearsExperience()}+ years of experience.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <a href={`tel:${SITE.phoneRaw}`}>
@@ -290,7 +400,7 @@ function Hero() {
                 <MessageCircle className="h-4 w-4 mr-2"/>Get WhatsApp Quote
               </Button>
             </a>
-            <a href="#build">
+            <a href="#build" onClick={(e) => scrollToSection(e, '#build')}>
               <Button size="lg" variant="ghost" className="rounded-full h-12 px-6 text-base text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950">
                 Build My PC <ArrowRight className="h-4 w-4 ml-2"/>
               </Button>
@@ -393,7 +503,7 @@ function About() {
         <div className="lg:col-span-7">
           <Badge className="rounded-full bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 hover:bg-blue-50 border-0">About Us</Badge>
           <h2 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight">
-            {yearsExperience()}+ years of honest tech expertise in Kothrud.
+            {yearsExperience()}+ years of experience in Kothrud.
           </h2>
           <p className="mt-6 text-lg text-muted-foreground leading-relaxed">
             1010 Computers was founded in 2015 with a simple idea — treat every customer&apos;s device like our own. Over the years we&apos;ve grown known for quick, accurate diagnosis, affordable pricing, prompt service and one of the widest selections of computer products in the area.
@@ -407,7 +517,7 @@ function About() {
         </div>
         <div className="lg:col-span-5 grid grid-cols-2 gap-4 md:gap-5">
           {[
-            { icon: Award, label: 'Since 2015', v: `${yearsExperience()}+ years` },
+            { icon: Award, label: 'Since 2015', v: `${yearsExperience()}+ years of experience` },
             { icon: Star, label: 'Rating', v: '4.9★' },
             { icon: MessageCircle, label: 'Reviews', v: '321+' },
             { icon: ShieldCheck, label: 'Parts', v: 'Genuine' },
@@ -461,11 +571,7 @@ function MaintenanceEnquiryForm({ serviceTitle, onClose }) {
       return
     }
 
-    fetch('/api/send-email', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...form, type: `maintenance: ${serviceTitle}` }),
-    }).catch(err => console.error('Email dispatch error:', err))
+    sendEnquiryEmail({ ...form, type: `maintenance: ${serviceTitle}` }).catch(err => console.error('Email dispatch error:', err))
 
     const messageLines = [
       `Hi 1010 Computers, I am interested in ${serviceTitle}:`,
@@ -575,7 +681,7 @@ function MaintenanceSection() {
         </div>
 
         <div className="mt-16 text-center">
-          <a href="#contact">
+          <a href="#contact" onClick={(e) => scrollToSection(e, '#contact')}>
             <Button size="lg" className="rounded-full h-14 px-8 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg hover:from-blue-700 hover:to-indigo-700">Book Maintenance Service</Button>
           </a>
         </div>
@@ -631,26 +737,20 @@ function MaintenanceSection() {
                     <div className="mt-6">
                       <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">Before &amp; After Example:</h4>
                       <div className="grid grid-cols-2 gap-3">
-                        <div className="relative rounded-2xl overflow-hidden aspect-video border border-border">
-                          <Image
-                            src={selectedService.beforeImage}
-                            alt={`${selectedService.title} Before`}
-                            fill
-                            className="object-cover"
-                            sizes="(max-width: 768px) 50vw, 250px"
-                          />
-                          <span className="absolute bottom-2 left-2 bg-red-600/95 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider shadow">Before</span>
-                        </div>
-                        <div className="relative rounded-2xl overflow-hidden aspect-video border border-border">
-                          <Image
-                            src={selectedService.afterImage}
-                            alt={`${selectedService.title} After`}
-                            fill
-                            className="object-cover"
-                            sizes="(max-width: 768px) 50vw, 250px"
-                          />
-                          <span className="absolute bottom-2 left-2 bg-emerald-600/95 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider shadow">After</span>
-                        </div>
+                        <SafeBeforeAfterImage
+                          src={selectedService.beforeImage}
+                          fallbackSrc={selectedService.fallbackBeforeImage}
+                          alt={`${selectedService.title} Before`}
+                          badgeLabel="Before"
+                          badgeBg="bg-red-600/95"
+                        />
+                        <SafeBeforeAfterImage
+                          src={selectedService.afterImage}
+                          fallbackSrc={selectedService.fallbackAfterImage}
+                          alt={`${selectedService.title} After`}
+                          badgeLabel="After"
+                          badgeBg="bg-emerald-600/95"
+                        />
                       </div>
                     </div>
                   )}
@@ -681,11 +781,7 @@ function FabricationEnquiryForm({ serviceTitle, onClose }) {
       return
     }
 
-    fetch('/api/send-email', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...form, type: `fabrication: ${serviceTitle}` }),
-    }).catch(err => console.error('Email dispatch error:', err))
+    sendEnquiryEmail({ ...form, type: `fabrication: ${serviceTitle}` }).catch(err => console.error('Email dispatch error:', err))
 
     const messageLines = [
       `Hi 1010 Computers, I am interested in ${serviceTitle}:`,
@@ -795,7 +891,7 @@ function FabricationSection() {
         </div>
 
         <div className="mt-16 text-center">
-          <a href="#contact">
+          <a href="#contact" onClick={(e) => scrollToSection(e, '#contact')}>
             <Button size="lg" className="rounded-full h-14 px-8 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg hover:from-blue-700 hover:to-indigo-700">Request Fabrication Service</Button>
           </a>
         </div>
@@ -851,26 +947,20 @@ function FabricationSection() {
                     <div className="mt-6">
                       <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">Before &amp; After Example:</h4>
                       <div className="grid grid-cols-2 gap-3">
-                        <div className="relative rounded-2xl overflow-hidden aspect-video border border-border">
-                          <Image
-                            src={selectedService.beforeImage}
-                            alt={`${selectedService.title} Before`}
-                            fill
-                            className="object-cover"
-                            sizes="(max-width: 768px) 50vw, 250px"
-                          />
-                          <span className="absolute bottom-2 left-2 bg-red-600/95 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider shadow">Before</span>
-                        </div>
-                        <div className="relative rounded-2xl overflow-hidden aspect-video border border-border">
-                          <Image
-                            src={selectedService.afterImage}
-                            alt={`${selectedService.title} After`}
-                            fill
-                            className="object-cover"
-                            sizes="(max-width: 768px) 50vw, 250px"
-                          />
-                          <span className="absolute bottom-2 left-2 bg-emerald-600/95 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider shadow">After</span>
-                        </div>
+                        <SafeBeforeAfterImage
+                          src={selectedService.beforeImage}
+                          fallbackSrc={selectedService.fallbackBeforeImage}
+                          alt={`${selectedService.title} Before`}
+                          badgeLabel="Before"
+                          badgeBg="bg-red-600/95"
+                        />
+                        <SafeBeforeAfterImage
+                          src={selectedService.afterImage}
+                          fallbackSrc={selectedService.fallbackAfterImage}
+                          alt={`${selectedService.title} After`}
+                          badgeLabel="After"
+                          badgeBg="bg-emerald-600/95"
+                        />
                       </div>
                     </div>
                   )}
@@ -964,7 +1054,7 @@ function BuildPC() {
           <a href={`https://wa.me/${SITE.whatsappRaw}?text=${encodeURIComponent('Hi, I want a free PC build consultation.')}`} target="_blank" rel="noreferrer">
             <Button size="lg" className="rounded-full h-12 px-6 bg-white text-slate-900 hover:bg-slate-100 text-base">Get Free Consultation <ArrowRight className="h-4 w-4 ml-2"/></Button>
           </a>
-          <a href="#contact">
+          <a href="#contact" onClick={(e) => scrollToSection(e, '#contact')}>
             <Button size="lg" variant="outline" className="rounded-full h-12 px-6 text-base bg-transparent text-white border-white/30 hover:bg-white/10 hover:text-white">Ask an Expert</Button>
           </a>
         </div>
@@ -1011,46 +1101,176 @@ function WhyChooseUs() {
 }
 
 function Testimonials() {
-  const [i, setI] = useState(0)
-  const n = testimonials.length
+  const [reviewsList, setReviewsList] = useState((googleReviewsStore && googleReviewsStore.reviews) || testimonials)
+  const [metaInfo, setMetaInfo] = useState({
+    rating: (googleReviewsStore && googleReviewsStore.rating) || SITE.rating,
+    count: (googleReviewsStore && googleReviewsStore.reviewCount) || SITE.reviewCount,
+    isLive: false,
+  })
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [loading, setLoading] = useState(true)
+  const [mounted, setMounted] = useState(false)
+
   useEffect(() => {
-    const t = setInterval(() => setI(v => (v + 1) % n), 5500)
+    let isMounted = true
+    setMounted(true)
+    async function fetchReviews() {
+      try {
+        const res = await fetch('/api/google-reviews')
+        if (!res.ok) throw new Error('API fetch failed')
+        const data = await res.json()
+        if (isMounted && data.reviews && data.reviews.length > 0) {
+          setReviewsList(data.reviews)
+          setMetaInfo({
+            rating: data.rating || SITE.rating,
+            count: data.reviewCount || SITE.reviewCount,
+            isLive: data.source === 'google' && !data.fallback,
+          })
+        }
+      } catch (err) {
+        console.warn('Fallback to static reviews:', err)
+      } finally {
+        if (isMounted) setLoading(false)
+      }
+    }
+    fetchReviews()
+    return () => { isMounted = false }
+  }, [])
+
+  const count = reviewsList.length
+
+  useEffect(() => {
+    if (count <= 1) return
+    const t = setInterval(() => {
+      setCurrentIndex(prev => (prev + 1) % count)
+    }, 5500)
     return () => clearInterval(t)
-  }, [n])
-  const item = testimonials[i]
+  }, [count])
+
+  const nextSlide = () => setCurrentIndex(prev => (prev + 1) % count)
+  const prevSlide = () => setCurrentIndex(prev => (prev - 1 + count) % count)
+
+  const currentReview = reviewsList[currentIndex] || reviewsList[0]
+
   return (
-    <section id="reviews" className="py-24 md:py-32 bg-background">
+    <section id="reviews" className="py-24 md:py-32 bg-background relative overflow-hidden">
       <LayoutContainer>
-        <div className="max-w-3xl">
-          <Badge className="rounded-full bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 hover:bg-blue-50 border-0">Reviews</Badge>
-          <h2 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight">Loved by our customers.</h2>
-          <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-900 px-3 py-1 text-sm text-amber-800 dark:text-amber-300">
-            <Star className="h-4 w-4 fill-amber-400 text-amber-500"/> 4.9★ from 321+ Google &amp; Justdial reviews
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="max-w-3xl">
+            <Badge className="rounded-full bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 hover:bg-blue-50 border-0">Reviews</Badge>
+            <h2 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight">Loved by our customers.</h2>
+            <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-900 px-3.5 py-1.5 text-sm text-amber-800 dark:text-amber-300 shadow-sm">
+              <Star className="h-4 w-4 fill-amber-400 text-amber-500 shrink-0"/>
+              <span className="font-semibold">{metaInfo.rating}★</span>
+              <span>from {metaInfo.count} Google &amp; Justdial reviews</span>
+              {metaInfo.isLive && (
+                <span className="ml-1.5 inline-flex items-center gap-1 text-[11px] font-medium bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"/> Live Google
+                </span>
+              )}
+            </div>
+          </div>
+
+          <div className="hidden md:flex items-center gap-2">
+            <button
+              onClick={prevSlide}
+              aria-label="Previous review"
+              className="h-10 w-10 rounded-full border border-border bg-background hover:bg-accent grid place-items-center transition shadow-sm"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <button
+              onClick={nextSlide}
+              aria-label="Next review"
+              className="h-10 w-10 rounded-full border border-border bg-background hover:bg-accent grid place-items-center transition shadow-sm"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
           </div>
         </div>
 
         <div className="mt-12 relative">
-          <motion.div key={i} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="max-w-4xl lg:max-w-5xl mx-auto rounded-3xl bg-gradient-to-br from-blue-50 to-fuchsia-50 dark:from-blue-950/50 dark:to-fuchsia-950/30 border border-border p-8 md:p-12 shadow-xl">
-            <div className="flex items-center gap-1 text-amber-500 mb-4">
-              {[...Array(item.rating)].map((_, k) => <Star key={k} className="h-5 w-5 fill-current"/>)}
-            </div>
-            <p className="text-xl md:text-2xl leading-relaxed">&ldquo;{item.quote}&rdquo;</p>
-            <div className="mt-6 flex items-center justify-between">
-              <div>
-                <div className="font-semibold">{item.name}</div>
-                <div className="text-sm text-muted-foreground">{item.role}</div>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentIndex}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -16 }}
+              transition={{ duration: 0.35, ease: 'easeOut' }}
+              className="max-w-4xl lg:max-w-5xl mx-auto rounded-3xl bg-gradient-to-br from-blue-50/80 via-white to-fuchsia-50/50 dark:from-blue-950/40 dark:via-background dark:to-fuchsia-950/30 border border-border/80 p-8 md:p-12 shadow-xl backdrop-blur-sm relative"
+            >
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-1 text-amber-500">
+                  {[...Array(currentReview.rating || 5)].map((_, k) => (
+                    <Star key={k} className="h-5 w-5 fill-current" />
+                  ))}
+                </div>
+                <Badge variant="outline" className="text-xs rounded-full px-3 py-1 font-medium bg-background/80 border-border">
+                  {currentReview.tag || (metaInfo.isLive ? 'Google Review' : 'Customer Review')}
+                </Badge>
               </div>
-              <Badge variant="outline" className="text-xs">{item.tag}</Badge>
-            </div>
-          </motion.div>
+
+              <p className="text-xl md:text-2xl leading-relaxed text-foreground font-normal">
+                &ldquo;{currentReview.quote}&rdquo;
+              </p>
+
+              <div className="mt-8 flex items-center justify-between pt-6 border-t border-border/60">
+                <div className="flex items-center gap-3">
+                  {currentReview.avatar ? (
+                    <img
+                      src={currentReview.avatar}
+                      alt={currentReview.name}
+                      className="h-11 w-11 rounded-full object-cover border border-border"
+                      referrerPolicy="no-referrer"
+                    />
+                  ) : (
+                    <div className="h-11 w-11 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-white grid place-items-center font-semibold text-base shadow-sm">
+                      {currentReview.name ? currentReview.name.charAt(0).toUpperCase() : 'C'}
+                    </div>
+                  )}
+                  <div>
+                    <div className="font-semibold text-foreground text-base">{currentReview.name}</div>
+                    <div className="text-xs text-muted-foreground">{currentReview.role}</div>
+                  </div>
+                </div>
+
+                <div className="md:hidden flex items-center gap-1">
+                  <button
+                    onClick={prevSlide}
+                    aria-label="Previous review"
+                    className="h-8 w-8 rounded-full border border-border bg-background grid place-items-center text-muted-foreground"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={nextSlide}
+                    aria-label="Next review"
+                    className="h-8 w-8 rounded-full border border-border bg-background grid place-items-center text-muted-foreground"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
 
           <div className="mt-6 flex items-center justify-center gap-2">
-            {testimonials.map((_, k) => (
-              <button key={k} onClick={() => setI(k)} aria-label={`Go to review ${k + 1}`} className={`h-2 rounded-full transition-all ${k === i ? 'w-8 bg-blue-600' : 'w-2 bg-muted-foreground/30 hover:bg-muted-foreground/60'}`}/>
+            {reviewsList.map((_, k) => (
+              <button
+                key={k}
+                onClick={() => setCurrentIndex(k)}
+                aria-label={`Go to review ${k + 1}`}
+                className={`h-2 rounded-full transition-all duration-300 ${
+                  k === currentIndex ? 'w-8 bg-blue-600 dark:bg-blue-500' : 'w-2 bg-muted-foreground/30 hover:bg-muted-foreground/60'
+                }`}
+              />
             ))}
           </div>
         </div>
-        <p className="mt-6 text-xs text-center text-muted-foreground">Testimonials shown are placeholders and will be replaced with real customer reviews.</p>
+
+        <p className="mt-6 text-xs text-center text-muted-foreground">
+          Verified customer reviews for 1010 Computers (Kothrud, Pune) on Google &amp; Justdial.
+        </p>
       </LayoutContainer>
     </section>
   )
@@ -1077,7 +1297,7 @@ function Gallery() {
 
         <div className="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
           {filtered.map((g, k) => (
-            <motion.div key={g.src + k} layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3 }} className={`relative overflow-hidden rounded-2xl bg-background border border-border shadow-sm group ${k % 5 === 0 ? 'aspect-[4/5]' : 'aspect-square'}`}>
+            <motion.div key={g.src + k} layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3 }} className="relative overflow-hidden rounded-2xl bg-background border border-border shadow-sm group aspect-square">
               <Image src={g.src} alt={g.alt} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 768px) 50vw, 25vw"/>
               <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"/>
               <div className="absolute bottom-3 left-3 right-3 text-white text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity">{g.alt}</div>
@@ -1128,11 +1348,7 @@ function Contact() {
       return
     }
 
-    fetch('/api/send-email', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...form, type: 'contact-form' }),
-    }).catch(err => console.error('Email dispatch error:', err))
+    sendEnquiryEmail({ ...form, type: 'contact-form' }).catch(err => console.error('Email dispatch error:', err))
 
     const messageLines = [
       `Hi 1010 Computers, I have an enquiry:`,
@@ -1255,7 +1471,15 @@ function Footer() {
           <div className="text-sm uppercase tracking-wider text-white font-semibold">Quick Links</div>
           <ul className="mt-4 space-y-2 text-sm">
             {navLinks.slice(0, 6).map(l => (
-              <li key={l.href}><a href={l.href} className="hover:text-white transition">{l.label}</a></li>
+              <li key={l.href}>
+                <a
+                  href={l.href}
+                  onClick={(e) => scrollToSection(e, l.href)}
+                  className="hover:text-white transition"
+                >
+                  {l.label}
+                </a>
+              </li>
             ))}
           </ul>
         </div>
@@ -1302,6 +1526,32 @@ function FloatingActions() {
 }
 
 function App() {
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.hash) {
+      const initialHash = window.location.hash
+      window.history.replaceState(null, '', window.location.pathname + window.location.search)
+      setTimeout(() => {
+        scrollToSection(null, initialHash)
+      }, 100)
+    }
+
+    const handleGlobalClick = (e) => {
+      const anchor = e.target.closest('a[href^="#"]')
+      if (!anchor) return
+      const href = anchor.getAttribute('href')
+      if (!href || href === '#') return
+
+      const targetId = href.replace(/^#/, '')
+      if (targetId === 'home' || document.getElementById(targetId)) {
+        e.preventDefault()
+        scrollToSection(null, href)
+      }
+    }
+
+    document.addEventListener('click', handleGlobalClick)
+    return () => document.removeEventListener('click', handleGlobalClick)
+  }, [])
+
   return (
     <main className="min-h-screen bg-background text-foreground">
       <Nav/>
